@@ -4,24 +4,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { Suspense, lazy } from "react";
-
-const Index = lazy(() => import("./pages/Index"));
-const AppPage = lazy(() => import("./pages/AppPage"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
-const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+import Index from "./pages/Index";
+import AppPage from "./pages/AppPage";
+import AuthPage from "./pages/AuthPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
-
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-      <p className="text-muted-foreground">Carregando...</p>
-    </div>
-  </div>
-);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -30,16 +19,14 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/app" element={<AppPage />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/onboarding" element={<OnboardingPage />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/app" element={<AppPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
