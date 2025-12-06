@@ -2,44 +2,94 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Barcode, Clock, Plus, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const recentSearches = [
-  { id: 1, name: "Arroz branco", calories: 130, portion: "100g" },
-  { id: 2, name: "Frango grelhado", calories: 165, portion: "100g" },
-  { id: 3, name: "Banana", calories: 89, portion: "1 unidade" },
-];
+import { useAuth } from "@/contexts/AuthContext";
+import { addMeal, getTodayStats, updateDailyStats } from "@/services/appService";
 
 const popularFoods = [
-  { id: 1, name: "Ovo cozido", calories: 78, portion: "1 unidade", emoji: "🥚" },
-  { id: 2, name: "Pão integral", calories: 69, portion: "1 fatia", emoji: "🍞" },
-  { id: 3, name: "Iogurte natural", calories: 59, portion: "100g", emoji: "🥛" },
-  { id: 4, name: "Maçã", calories: 52, portion: "1 unidade", emoji: "🍎" },
-  { id: 5, name: "Aveia", calories: 68, portion: "30g", emoji: "🥣" },
-  { id: 6, name: "Peito de peru", calories: 104, portion: "100g", emoji: "🍗" },
+  { id: 1, name: "Ovo cozido", calories: 78, protein: 6, carbs: 0.6, fat: 5.3, portion: "1 unidade", emoji: "🥚" },
+  { id: 2, name: "Pão integral", calories: 69, protein: 4, carbs: 12, fat: 1, portion: "1 fatia", emoji: "🍞" },
+  { id: 3, name: "Iogurte natural", calories: 59, protein: 3.5, carbs: 4.7, fat: 3.2, portion: "100g", emoji: "🥛" },
+  { id: 4, name: "Maçã", calories: 52, protein: 0.3, carbs: 14, fat: 0.2, portion: "1 unidade", emoji: "🍎" },
+  { id: 5, name: "Aveia", calories: 68, protein: 2.4, carbs: 12, fat: 1.4, portion: "30g", emoji: "🥣" },
+  { id: 6, name: "Peito de frango", calories: 165, protein: 31, carbs: 0, fat: 3.6, portion: "100g", emoji: "🍗" },
+  { id: 7, name: "Arroz branco", calories: 130, protein: 2.7, carbs: 28, fat: 0.3, portion: "100g", emoji: "🍚" },
+  { id: 8, name: "Banana", calories: 89, protein: 1.1, carbs: 23, fat: 0.3, portion: "1 unidade", emoji: "🍌" },
 ];
 
 const searchResults = [
-  { id: 1, name: "Arroz branco cozido", brand: "Genérico", calories: 130, portion: "100g" },
-  { id: 2, name: "Arroz integral", brand: "Genérico", calories: 111, portion: "100g" },
-  { id: 3, name: "Arroz com feijão", brand: "Caseiro", calories: 150, portion: "100g" },
-  { id: 4, name: "Arroz japonês", brand: "Sushi", calories: 140, portion: "100g" },
+  { id: 1, name: "Arroz branco cozido", brand: "Genérico", calories: 130, protein: 2.7, carbs: 28, fat: 0.3, portion: "100g" },
+  { id: 2, name: "Arroz integral", brand: "Genérico", calories: 111, protein: 2.6, carbs: 23, fat: 0.9, portion: "100g" },
+  { id: 3, name: "Arroz com feijão", brand: "Caseiro", calories: 150, protein: 5, carbs: 25, fat: 2, portion: "100g" },
+  { id: 4, name: "Arroz japonês", brand: "Sushi", calories: 140, protein: 2.5, carbs: 31, fat: 0.2, portion: "100g" },
 ];
 
 const AppSearch = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [query, setQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<typeof popularFoods>([]);
+  const [adding, setAdding] = useState<string | null>(null);
 
   const handleSearch = (value: string) => {
     setQuery(value);
     setShowResults(value.length > 0);
   };
 
-  const handleAddFood = (food: any) => {
-    toast({
-      title: "Alimento adicionado!",
-      description: `${food.name} - ${food.calories} kcal`,
-    });
+  const handleAddFood = async (food: any) => {
+    if (!user) return;
+    
+    setAdding(food.name);
+    try {
+      // Determine meal type based on current time
+      const hour = new Date().getHours();
+      let mealType = "snack";
+      if (hour >= 5 && hour < 11) mealType = "breakfast";
+      else if (hour >= 11 && hour < 15) mealType = "lunch";
+      else if (hour >= 18 && hour < 22) mealType = "dinner";
+
+      // Add meal
+      await addMeal({
+        user_id: user.id,
+        name: food.name,
+        meal_type: mealType,
+        calories: food.calories,
+        protein: food.protein || 0,
+        carbs: food.carbs || 0,
+        fat: food.fat || 0,
+        logged_at: new Date().toISOString(),
+      });
+
+      // Update daily stats
+      const stats = await getTodayStats(user.id);
+      if (stats) {
+        await updateDailyStats(stats.id, {
+          total_calories: (stats.total_calories || 0) + food.calories,
+          total_protein: Number(stats.total_protein || 0) + (food.protein || 0),
+          total_carbs: Number(stats.total_carbs || 0) + (food.carbs || 0),
+          total_fat: Number(stats.total_fat || 0) + (food.fat || 0),
+        });
+      }
+
+      // Add to recent searches if not already there
+      if (!recentSearches.find(r => r.name === food.name)) {
+        setRecentSearches(prev => [food, ...prev].slice(0, 5));
+      }
+
+      toast({
+        title: "Alimento adicionado!",
+        description: `${food.name} - ${food.calories} kcal`,
+      });
+    } catch (error) {
+      console.error("Error adding food:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar o alimento.",
+        variant: "destructive",
+      });
+    } finally {
+      setAdding(null);
+    }
   };
 
   return (
@@ -69,7 +119,9 @@ const AppSearch = () => {
         /* Search Results */
         <div className="space-y-3">
           <h2 className="font-semibold text-muted-foreground">Resultados</h2>
-          {searchResults.map((food, index) => (
+          {searchResults
+            .filter(f => f.name.toLowerCase().includes(query.toLowerCase()))
+            .map((food, index) => (
             <motion.div
               key={food.id}
               initial={{ opacity: 0, y: 10 }}
@@ -89,9 +141,14 @@ const AppSearch = () => {
               </div>
               <button
                 onClick={() => handleAddFood(food)}
-                className="p-2 rounded-lg bg-primary text-primary-foreground"
+                disabled={adding === food.name}
+                className="p-2 rounded-lg bg-primary text-primary-foreground disabled:opacity-50"
               >
-                <Plus className="w-5 h-5" />
+                {adding === food.name ? (
+                  <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                ) : (
+                  <Plus className="w-5 h-5" />
+                )}
               </button>
             </motion.div>
           ))}
@@ -99,36 +156,43 @@ const AppSearch = () => {
       ) : (
         <>
           {/* Recent Searches */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="w-4 h-4" />
-              <h2 className="font-semibold">Recentes</h2>
-            </div>
-            {recentSearches.map((food, index) => (
-              <motion.div
-                key={food.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-xl p-4 border border-border flex items-center gap-4"
-              >
-                <div className="flex-1">
-                  <p className="font-semibold">{food.name}</p>
-                  <p className="text-xs text-muted-foreground">{food.portion}</p>
-                </div>
-                <div className="text-right mr-2">
-                  <p className="font-bold">{food.calories}</p>
-                  <p className="text-xs text-muted-foreground">kcal</p>
-                </div>
-                <button
-                  onClick={() => handleAddFood(food)}
-                  className="p-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors"
+          {recentSearches.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Clock className="w-4 h-4" />
+                <h2 className="font-semibold">Recentes</h2>
+              </div>
+              {recentSearches.map((food, index) => (
+                <motion.div
+                  key={`${food.id}-recent`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-card rounded-xl p-4 border border-border flex items-center gap-4"
                 >
-                  <Plus className="w-5 h-5" />
-                </button>
-              </motion.div>
-            ))}
-          </div>
+                  <div className="flex-1">
+                    <p className="font-semibold">{food.name}</p>
+                    <p className="text-xs text-muted-foreground">{food.portion}</p>
+                  </div>
+                  <div className="text-right mr-2">
+                    <p className="font-bold">{food.calories}</p>
+                    <p className="text-xs text-muted-foreground">kcal</p>
+                  </div>
+                  <button
+                    onClick={() => handleAddFood(food)}
+                    disabled={adding === food.name}
+                    className="p-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors disabled:opacity-50"
+                  >
+                    {adding === food.name ? (
+                      <div className="w-5 h-5 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin" />
+                    ) : (
+                      <Plus className="w-5 h-5" />
+                    )}
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
           {/* Popular Foods */}
           <div className="space-y-3">
@@ -144,7 +208,8 @@ const AppSearch = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 + index * 0.05 }}
                   onClick={() => handleAddFood(food)}
-                  className="bg-card rounded-xl p-4 border border-border text-left hover:border-primary transition-colors"
+                  disabled={adding === food.name}
+                  className="bg-card rounded-xl p-4 border border-border text-left hover:border-primary transition-colors disabled:opacity-50"
                 >
                   <span className="text-2xl mb-2 block">{food.emoji}</span>
                   <p className="font-semibold text-sm">{food.name}</p>
