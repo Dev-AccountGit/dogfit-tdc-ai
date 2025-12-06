@@ -117,14 +117,14 @@ const AppPage = () => {
           {/* Mais */}
           <button
             type="button"
-            onClick={() => setActiveTab("mais")}
+            onClick={() => setActiveTab("profile")}
             className="flex flex-col items-center justify-center py-3 gap-1"
           >
             <MoreHorizontal 
-              className={`w-6 h-6 ${activeTab === "mais" ? "text-primary" : "text-muted-foreground"}`}
-              strokeWidth={activeTab === "mais" ? 2.5 : 1.5}
+              className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
+              strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
             />
-            <span className={`text-[10px] ${activeTab === "mais" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+            <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
               Mais
             </span>
           </button>
@@ -132,14 +132,14 @@ const AppPage = () => {
           {/* Histórico */}
           <button
             type="button"
-            onClick={() => setActiveTab("profile")}
+            onClick={() => setActiveTab("mais")}
             className="flex flex-col items-center justify-center py-3 gap-1"
           >
             <History 
-              className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
-              strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
+              className={`w-6 h-6 ${activeTab === "mais" ? "text-primary" : "text-muted-foreground"}`}
+              strokeWidth={activeTab === "mais" ? 2.5 : 1.5}
             />
-            <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+            <span className={`text-[10px] ${activeTab === "mais" ? "text-primary font-medium" : "text-muted-foreground"}`}>
               Histórico
             </span>
           </button>
