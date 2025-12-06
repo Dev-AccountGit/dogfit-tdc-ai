@@ -8,8 +8,10 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile, type Profile } from "@/services/appService";
+import { ADMIN_EMAIL } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.png";
+import AdminPanel from "./admin/AdminPanel";
 
 const AppMore = () => {
   const { user, signOut } = useAuth();
@@ -106,6 +108,8 @@ const AppMore = () => {
   // Render section content
   const renderSection = () => {
     switch (activeSection) {
+      case "admin":
+        return <AdminPanel onClose={() => setActiveSection(null)} />;
       case "profile":
         return (
           <div className="space-y-4">
@@ -323,6 +327,9 @@ const AppMore = () => {
     );
   }
 
+  // Check if current user is admin
+  const isAdminUser = user?.email === ADMIN_EMAIL;
+
   const menuItems = [
     { icon: User, label: "Perfil", section: "profile", color: "text-blue-500" },
     { icon: Target, label: "Metas Diárias", section: "goals", color: "text-green-500" },
@@ -364,6 +371,23 @@ const AppMore = () => {
           </div>
         ))}
       </motion.div>
+
+      {/* Admin Panel Button */}
+      {isAdminUser && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          onClick={() => setActiveSection("admin")}
+          className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-primary/20 to-primary/5 rounded-2xl border border-primary/30"
+        >
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-primary" />
+          </div>
+          <span className="text-foreground font-semibold flex-1 text-left">Painel Admin</span>
+          <ChevronRight className="w-5 h-5 text-primary" />
+        </motion.button>
+      )}
 
       {/* Menu Items */}
       <motion.div
