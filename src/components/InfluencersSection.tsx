@@ -4,32 +4,32 @@ const influencers = [
   {
     name: "Jeremiah Jones",
     image: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=300&h=300&fit=crop&crop=faces",
-    quote: "Make a healthier choice for your latenight snack and use the Cal AI app to track your calories",
+    quote: "Make a healthier choice for your latenight snack and use the DogFitTdc Ai app to track your calories",
   },
   {
     name: "Kadin Kerns",
     image: "https://images.unsplash.com/photo-1583500178450-e59f4edcc6e5?w=300&h=300&fit=crop&crop=faces",
-    quote: "Looking good as usual and my calories are too with Cal AI 🔥",
+    quote: "Looking good as usual and my calories are too with DogFitTdc Ai 🔥",
   },
   {
     name: "Dawson Gibbs",
     image: "https://images.unsplash.com/photo-1611672585731-fa10603fb9e0?w=300&h=300&fit=crop&crop=faces",
-    quote: "Track with Cal AI app, if you're not tracking your calories while going for your goals then you're doing it all wrong.",
+    quote: "Track with DogFitTdc Ai app, if you're not tracking your calories while going for your goals then you're doing it all wrong.",
   },
   {
     name: "Brian Wallack",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=faces",
-    quote: "Cal AI can literally track anything 🤯",
+    quote: "DogFitTdc Ai can literally track anything 🤯",
   },
   {
     name: "Hussein Farhat",
     image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=300&h=300&fit=crop&crop=faces",
-    quote: "If you're tracking your calories and macros correctly with Cal AI, you can get away with eating almost anything.",
+    quote: "If you're tracking your calories and macros correctly with DogFitTdc Ai, you can get away with eating almost anything.",
   },
   {
     name: "Alex Eubank",
     image: "https://images.unsplash.com/photo-1558203728-00f45181dd84?w=300&h=300&fit=crop&crop=faces",
-    quote: "Cal AI is literally the best calorie tracker. Fastest and most accurate I've ever used.",
+    quote: "DogFitTdc Ai is literally the best calorie tracker. Fastest and most accurate I've ever used.",
   },
 ];
 
