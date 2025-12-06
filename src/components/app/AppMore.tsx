@@ -18,7 +18,6 @@ const AppMore = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
@@ -71,8 +70,6 @@ const AppMore = () => {
       }
     } catch (error) {
       console.error("Error loading profile:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -113,13 +110,6 @@ const AppMore = () => {
     { title: "Mestre das Proteínas", description: "Atinja sua meta de proteína 5 dias seguidos", unlocked: false, icon: "💪" },
   ];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   // Render section content
   const renderSection = () => {
