@@ -3,46 +3,47 @@ import { Check } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
-const obstacles = [
-  { id: 'cravings', label: 'Desejos alimentares', emoji: '🍫' },
-  { id: 'anxiety', label: 'Ansiedade com uma dieta limitada', emoji: '😰' },
-  { id: 'night', label: 'Lanchinhos à noite', emoji: '🌙' },
-  { id: 'schedule', label: 'Agenda cheia', emoji: '📅' },
-  { id: 'other', label: 'Algo mais', emoji: '🤷' },
-  { id: 'unhealthy', label: 'Hábitos alimentares não saudáveis', emoji: '🍔' },
-  { id: 'support', label: 'Falta de apoio', emoji: '💔' },
+const restrictions = [
+  { id: 'lactose', label: 'Sem Lactose', emoji: '🥛' },
+  { id: 'sugar', label: 'Sem Açúcar', emoji: '🍬' },
+  { id: 'gluten', label: 'Sem Glúten', emoji: '🌾' },
+  { id: 'nuts', label: 'Sem Nozes', emoji: '🥜' },
+  { id: 'none', label: 'Nenhum', emoji: '✅' },
 ];
 
-export const ObstaclesStep = () => {
+export const DietaryRestrictionsStep = () => {
   const { data, updateData, setStep } = useOnboarding();
 
-  const toggleObstacle = (id: string) => {
-    const current = data.obstacles || [];
+  const toggleRestriction = (id: string) => {
+    if (id === 'none') {
+      updateData({ dietaryRestrictions: ['none'] });
+      return;
+    }
+    
+    const current = data.dietaryRestrictions?.filter(r => r !== 'none') || [];
     const updated = current.includes(id)
-      ? current.filter(o => o !== id)
+      ? current.filter(r => r !== id)
       : [...current, id];
-    updateData({ obstacles: updated });
+    updateData({ dietaryRestrictions: updated });
   };
 
-  const canContinue = (data.obstacles?.length || 0) > 0;
-
   return (
-    <OnboardingLayout category="Meta & Foco">
+    <OnboardingLayout category="Hábitos Alimentares">
       <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          O que está te impedindo de atingir seus objetivos?
+        <h1 className="text-2xl font-bold text-gray-900 mb-8">
+          Você tem alguma restrição alimentar que devemos saber?
         </h1>
 
-        <div className="space-y-2 flex-1">
-          {obstacles.map((item, index) => {
-            const isSelected = data.obstacles?.includes(item.id);
+        <div className="space-y-3">
+          {restrictions.map((item, index) => {
+            const isSelected = data.dietaryRestrictions?.includes(item.id);
             return (
               <motion.button
                 key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.03 }}
-                onClick={() => toggleObstacle(item.id)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => toggleRestriction(item.id)}
                 className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
                   isSelected
                     ? 'border-emerald-500 bg-emerald-50'
@@ -69,13 +70,8 @@ export const ObstaclesStep = () => {
       <div className="px-6 pb-8 pt-4 safe-area-bottom">
         <motion.button
           whileTap={{ scale: 0.98 }}
-          onClick={() => setStep(11)}
-          disabled={!canContinue}
-          className={`w-full font-semibold py-4 rounded-full transition-all ${
-            canContinue
-              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-              : 'bg-gray-200 text-gray-400'
-          }`}
+          onClick={() => setStep(28)}
+          className="w-full bg-emerald-500 text-white font-semibold py-4 rounded-full shadow-lg shadow-emerald-500/30"
         >
           Próximo
         </motion.button>

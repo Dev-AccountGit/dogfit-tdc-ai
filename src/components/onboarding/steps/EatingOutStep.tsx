@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
-import { Home, UtensilsCrossed } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
-const frequencies = [
-  { id: 'rarely', title: 'Raramente', description: 'Como quase sempre em casa', emoji: '🏠' },
-  { id: 'sometimes', title: 'Às vezes', description: '1-2 vezes por semana', emoji: '🍽️' },
-  { id: 'often', title: 'Frequentemente', description: '3-5 vezes por semana', emoji: '🍔' },
-  { id: 'always', title: 'Quase sempre', description: 'Maioria das refeições fora', emoji: '🥡' },
+const options = [
+  { id: 'home', label: 'Apenas em casa', emoji: '🏠' },
+  { id: 'sometimes', label: 'Às vezes', emoji: '🍽️' },
+  { id: 'often', label: 'Frequentemente', emoji: '🍔' },
 ];
 
 export const EatingOutStep = () => {
@@ -15,49 +13,40 @@ export const EatingOutStep = () => {
 
   const handleSelect = (id: string) => {
     updateData({ eatingOutFrequency: id });
-    setTimeout(() => setStep(22), 300);
+    setTimeout(() => setStep(34), 200);
   };
 
   return (
-    <OnboardingLayout>
-      <div className="flex-1 flex flex-col px-6 pt-8">
-        <h2 className="text-2xl font-bold text-white text-center mb-2">
-          Com que frequência come fora?
-        </h2>
-        <p className="text-white/70 text-center mb-8">
-          Restaurantes, delivery, etc.
-        </p>
+    <OnboardingLayout category="Hábitos Alimentares">
+      <div className="flex-1 flex flex-col px-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-8">
+          Você come fora?
+        </h1>
 
-        <div className="space-y-3">
-          {frequencies.map((item, index) => (
-            <motion.button
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleSelect(item.id)}
-              className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                data.eatingOutFrequency === item.id
-                  ? 'bg-white shadow-lg'
-                  : 'bg-white/20 backdrop-blur-sm'
-              }`}
-            >
-              <span className="text-3xl">{item.emoji}</span>
-              <div className="text-left flex-1">
-                <p className={`font-semibold ${
-                  data.eatingOutFrequency === item.id ? 'text-emerald-600' : 'text-white'
+        <div className="flex-1 flex flex-col justify-center">
+          <div className="space-y-3">
+            {options.map((option, index) => (
+              <motion.button
+                key={option.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => handleSelect(option.id)}
+                className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all ${
+                  data.eatingOutFrequency === option.id
+                    ? 'border-emerald-500 bg-emerald-50'
+                    : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-2xl">{option.emoji}</span>
+                <span className={`font-medium text-lg ${
+                  data.eatingOutFrequency === option.id ? 'text-emerald-700' : 'text-gray-700'
                 }`}>
-                  {item.title}
-                </p>
-                <p className={`text-sm ${
-                  data.eatingOutFrequency === item.id ? 'text-gray-500' : 'text-white/70'
-                }`}>
-                  {item.description}
-                </p>
-              </div>
-            </motion.button>
-          ))}
+                  {option.label}
+                </span>
+              </motion.button>
+            ))}
+          </div>
         </div>
       </div>
     </OnboardingLayout>
