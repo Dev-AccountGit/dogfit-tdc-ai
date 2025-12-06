@@ -1,6 +1,8 @@
-import { Apple } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="py-8 border-t border-border">
       <div className="container mx-auto px-4">
@@ -12,18 +14,18 @@ const Footer = () => {
 
           <nav className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">
-              Privacy Policy
+              {t("footer.privacy")}
             </a>
             <a href="#" className="hover:text-foreground transition-colors">
-              Terms of Service
+              {t("footer.terms")}
             </a>
             <a href="#" className="hover:text-foreground transition-colors">
-              Contact
+              {t("footer.contact")}
             </a>
           </nav>
 
           <p className="text-sm text-muted-foreground">
-            © 2024 DogFitTdc Ai. All rights reserved.
+            {t("footer.copyright")}
           </p>
         </div>
       </div>

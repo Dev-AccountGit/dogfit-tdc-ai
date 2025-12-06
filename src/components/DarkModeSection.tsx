@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { Moon, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const DarkModeSection = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-16 md:py-24 bg-gradient-dark text-primary-foreground overflow-hidden">
       <div className="container mx-auto px-4">
@@ -13,28 +16,28 @@ const DarkModeSection = () => {
           >
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary-foreground/80 rounded-full px-4 py-2 mb-6">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">New feature</span>
+              <span className="text-sm font-medium">{t("darkMode.newFeature")}</span>
             </div>
             
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Dark Mode
+              {t("darkMode.title1")}
               <br />
-              <span className="text-primary-foreground/80">for a sleek tracking</span>
+              <span className="text-primary-foreground/80">{t("darkMode.title2")}</span>
               <br />
-              <span className="text-primary-foreground/60">experience! 🌙✨</span>
+              <span className="text-primary-foreground/60">{t("darkMode.title3")}</span>
             </h2>
             
             <p className="text-lg text-primary-foreground/70 mb-8">
-              New features weekly :)
+              {t("darkMode.subtitle")}
             </p>
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Moon className="w-5 h-5" />
-                <span>Easy on the eyes</span>
+                <span>{t("darkMode.easyOnEyes")}</span>
               </div>
               <div className="w-1 h-1 rounded-full bg-primary-foreground/50"></div>
-              <span>Battery efficient</span>
+              <span>{t("darkMode.batteryEfficient")}</span>
             </div>
           </motion.div>
 
@@ -53,7 +56,7 @@ const DarkModeSection = () => {
                   <div className="p-6 space-y-6">
                     {/* Header */}
                     <div className="flex justify-between items-center">
-                      <span className="text-white/60 text-sm">Today</span>
+                      <span className="text-white/60 text-sm">{t("darkMode.today")}</span>
                       <span className="text-white font-semibold">1,420 / 2,000</span>
                     </div>
 
@@ -91,7 +94,7 @@ const DarkModeSection = () => {
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-white">580</div>
-                            <div className="text-xs text-white/60">remaining</div>
+                            <div className="text-xs text-white/60">{t("darkMode.remaining")}</div>
                           </div>
                         </div>
                       </div>
@@ -101,15 +104,15 @@ const DarkModeSection = () => {
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center">
                         <div className="text-health-red text-lg font-bold">120g</div>
-                        <div className="text-white/60 text-xs">Protein</div>
+                        <div className="text-white/60 text-xs">{t("darkMode.protein")}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-health-yellow text-lg font-bold">180g</div>
-                        <div className="text-white/60 text-xs">Carbs</div>
+                        <div className="text-white/60 text-xs">{t("darkMode.carbs")}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-health-green text-lg font-bold">45g</div>
-                        <div className="text-white/60 text-xs">Fat</div>
+                        <div className="text-white/60 text-xs">{t("darkMode.fat")}</div>
                       </div>
                     </div>
 
@@ -121,7 +124,7 @@ const DarkModeSection = () => {
                         </div>
                         <div className="flex-1">
                           <div className="text-white text-sm font-medium">Greek Salad</div>
-                          <div className="text-white/60 text-xs">Lunch • 320 cal</div>
+                          <div className="text-white/60 text-xs">{t("darkMode.lunch")} • 320 cal</div>
                         </div>
                       </div>
                     </div>
