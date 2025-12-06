@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, X, ExternalLink } from "lucide-react";
+import { Download, X, ExternalLink, Wifi, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const UpdateChecker = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [updateMode, setUpdateMode] = useState<"apk" | "live">("live");
   const [updateInfo, setUpdateInfo] = useState<{
     currentVersion: string;
     latestVersion: string;
@@ -35,11 +36,20 @@ const UpdateChecker = () => {
       const { data: settings, error } = await supabase
         .from("app_settings")
         .select("key, value")
-        .in("key", ["APP_VERSION", "LATEST_VERSION", "UPDATE_MESSAGE", "UPDATE_URL", "FORCE_UPDATE"]);
+        .in("key", ["UPDATE_MODE", "APP_VERSION", "LATEST_VERSION", "UPDATE_MESSAGE", "UPDATE_URL", "FORCE_UPDATE"]);
 
       if (error) throw error;
 
       if (settings) {
+        const mode = settings.find((s) => s.key === "UPDATE_MODE")?.value as "apk" | "live" || "live";
+        setUpdateMode(mode);
+
+        // If in live mode, no update popup needed - updates happen automatically
+        if (mode === "live") {
+          return;
+        }
+
+        // APK mode - check for version updates
         const currentVersion = settings.find((s) => s.key === "APP_VERSION")?.value || "1.0.0";
         const latestVersion = settings.find((s) => s.key === "LATEST_VERSION")?.value || "1.0.0";
         const message = settings.find((s) => s.key === "UPDATE_MESSAGE")?.value || "Uma nova versão está disponível!";
@@ -69,11 +79,20 @@ const UpdateChecker = () => {
     }
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   const handleDismiss = () => {
     if (!updateInfo?.forceUpdate) {
       setShowUpdateModal(false);
     }
   };
+
+  // In live mode, no update modal needed
+  if (updateMode === "live") {
+    return null;
+  }
 
   if (!showUpdateModal || !updateInfo) return null;
 
@@ -156,7 +175,7 @@ const UpdateChecker = () => {
               className={`${updateInfo.forceUpdate ? "w-full" : "flex-1"} py-3 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2`}
             >
               <ExternalLink className="w-4 h-4" />
-              Atualizar Agora
+              Baixar APK
             </motion.button>
           </div>
 
