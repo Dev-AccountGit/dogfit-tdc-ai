@@ -32,7 +32,6 @@ const mealTypeNames: Record<string, string> = {
 const AppDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DailyStats | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -45,7 +44,6 @@ const AppDashboard = () => {
 
   const loadData = async () => {
     if (!user) return;
-    setLoading(true);
     try {
       const [statsData, mealsData, profileData] = await Promise.all([
         getTodayStats(user.id),
@@ -57,8 +55,6 @@ const AppDashboard = () => {
       setProfile(profileData);
     } catch (error) {
       console.error("Error loading data:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -87,14 +83,6 @@ const AppDashboard = () => {
   const consumed = stats?.total_calories || 0;
   const remaining = Math.max(0, dailyGoal - consumed);
   const progress = Math.min(100, (consumed / dailyGoal) * 100);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-4 space-y-6">
