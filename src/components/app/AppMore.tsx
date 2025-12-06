@@ -8,7 +8,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile, type Profile } from "@/services/appService";
-import { checkIsAdmin } from "@/services/adminService";
+import { checkIsAdmin, ADMIN_EMAIL } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.png";
 import AdminPanel from "./admin/AdminPanel";
@@ -45,6 +45,14 @@ const AppMore = () => {
       setIsAdmin(false);
       return;
     }
+    
+    // Check by email first (fastest)
+    if (user.email === ADMIN_EMAIL) {
+      setIsAdmin(true);
+      return;
+    }
+    
+    // Then check database role
     try {
       const adminStatus = await checkIsAdmin(user.id);
       setIsAdmin(adminStatus);

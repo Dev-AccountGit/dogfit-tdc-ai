@@ -3,33 +3,56 @@ import { supabase } from "@/integrations/supabase/client";
 // Admin email constant
 export const ADMIN_EMAIL = "kartywillytdc@gmail.com";
 
-// Check if user is admin
+// Check if user is admin - uses direct query with RLS
 export const checkIsAdmin = async (userId: string): Promise<boolean> => {
-  const { data, error } = await supabase.rpc('has_role', {
-    _user_id: userId,
-    _role: 'admin'
-  });
+  try {
+    // First try RPC function
+    const { data, error } = await supabase.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin'
+    });
 
-  if (error) {
+    if (!error && data === true) {
+      return true;
+    }
+
+    // Fallback: direct query to user_roles (user can see their own role)
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    if (!roleError && roleData) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
     console.error("Error checking admin status:", error);
     return false;
   }
-
-  return data === true;
 };
 
 // Get user role
 export const getUserRole = async (userId: string): Promise<string | null> => {
-  const { data, error } = await supabase.rpc('get_user_role', {
-    _user_id: userId
-  });
+  try {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-  if (error) {
+    if (error || !data) {
+      return null;
+    }
+
+    return data.role;
+  } catch (error) {
     console.error("Error getting user role:", error);
     return null;
   }
-
-  return data;
 };
 
 // Get all users with profiles
