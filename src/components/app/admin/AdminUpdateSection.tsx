@@ -10,7 +10,11 @@ import {
   Globe,
   Clock,
   FileCode,
-  Save
+  Save,
+  Zap,
+  Wifi,
+  CloudDownload,
+  Radio
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getAppSettings, updateAppSetting } from "@/services/adminService";
@@ -19,11 +23,14 @@ interface AdminUpdateSectionProps {
   onBack: () => void;
 }
 
+type UpdateMode = "apk" | "live";
+
 const AdminUpdateSection = ({ onBack }: AdminUpdateSectionProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [updateMode, setUpdateMode] = useState<UpdateMode>("live");
   const [currentVersion, setCurrentVersion] = useState("1.0.0");
   const [latestVersion, setLatestVersion] = useState("1.0.0");
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -41,12 +48,14 @@ const AdminUpdateSection = ({ onBack }: AdminUpdateSectionProps) => {
     try {
       const settings = await getAppSettings();
       
+      const modeSetting = settings?.find((s: any) => s.key === "UPDATE_MODE");
       const versionSetting = settings?.find((s: any) => s.key === "APP_VERSION");
       const forceUpdateSetting = settings?.find((s: any) => s.key === "FORCE_UPDATE");
       const updateMsgSetting = settings?.find((s: any) => s.key === "UPDATE_MESSAGE");
       const updateUrlSetting = settings?.find((s: any) => s.key === "UPDATE_URL");
       const latestVersionSetting = settings?.find((s: any) => s.key === "LATEST_VERSION");
       
+      if (modeSetting) setUpdateMode((modeSetting.value as UpdateMode) || "live");
       if (versionSetting) setCurrentVersion(versionSetting.value || "1.0.0");
       if (latestVersionSetting) setLatestVersion(latestVersionSetting.value || "1.0.0");
       if (forceUpdateSetting) setForceUpdate(forceUpdateSetting.value === "true");
@@ -81,7 +90,6 @@ const AdminUpdateSection = ({ onBack }: AdminUpdateSectionProps) => {
 
   const checkForUpdates = () => {
     setChecking(true);
-    // Simulate checking for updates
     setTimeout(() => {
       setLastCheck(new Date());
       setChecking(false);
@@ -97,6 +105,7 @@ const AdminUpdateSection = ({ onBack }: AdminUpdateSectionProps) => {
   const handleSave = async () => {
     setSaving(true);
     try {
+      await updateAppSetting("UPDATE_MODE", updateMode, "Modo de atualização (apk ou live)");
       await updateAppSetting("APP_VERSION", currentVersion, "Versão atual do app");
       await updateAppSetting("LATEST_VERSION", latestVersion, "Última versão disponível");
       await updateAppSetting("FORCE_UPDATE", forceUpdate ? "true" : "false", "Forçar atualização obrigatória");
@@ -138,46 +147,150 @@ const AdminUpdateSection = ({ onBack }: AdminUpdateSectionProps) => {
         <h2 className="text-xl font-bold">Atualizações do App</h2>
       </div>
 
+      {/* Update Mode Selection */}
+      <div className="space-y-2">
+        <h3 className="font-semibold text-sm text-muted-foreground px-1">MODO DE ATUALIZAÇÃO</h3>
+        <div className="grid grid-cols-2 gap-3">
+          {/* Live Mode */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setUpdateMode("live")}
+            className={`p-4 rounded-2xl border-2 text-left transition-all ${
+              updateMode === "live"
+                ? "border-primary bg-primary/10"
+                : "border-border bg-card"
+            }`}
+          >
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+              updateMode === "live" ? "bg-primary" : "bg-muted"
+            }`}>
+              <Zap className={`w-6 h-6 ${updateMode === "live" ? "text-white" : "text-muted-foreground"}`} />
+            </div>
+            <h4 className="font-bold mb-1">Tempo Real</h4>
+            <p className="text-xs text-muted-foreground">
+              Sincronizado com Lovable. Atualizações automáticas via web.
+            </p>
+            <div className="flex items-center gap-1 mt-3 text-xs text-primary">
+              <Radio className="w-3 h-3" />
+              <span>Recomendado</span>
+            </div>
+          </motion.button>
+
+          {/* APK Mode */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setUpdateMode("apk")}
+            className={`p-4 rounded-2xl border-2 text-left transition-all ${
+              updateMode === "apk"
+                ? "border-primary bg-primary/10"
+                : "border-border bg-card"
+            }`}
+          >
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+              updateMode === "apk" ? "bg-primary" : "bg-muted"
+            }`}>
+              <Download className={`w-6 h-6 ${updateMode === "apk" ? "text-white" : "text-muted-foreground"}`} />
+            </div>
+            <h4 className="font-bold mb-1">APK Manual</h4>
+            <p className="text-xs text-muted-foreground">
+              Download de novo APK. Usuário instala manualmente.
+            </p>
+            <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
+              <Smartphone className="w-3 h-3" />
+              <span>Tradicional</span>
+            </div>
+          </motion.button>
+        </div>
+      </div>
+
+      {/* Live Mode Info */}
+      {updateMode === "live" && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="bg-primary/5 rounded-2xl p-4 border border-primary/20"
+        >
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <Wifi className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-1">Como funciona o modo Tempo Real?</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                O APK é uma "casca" que carrega o app diretamente do servidor Lovable. 
+                Qualquer alteração feita no Lovable aparece instantaneamente no app instalado, 
+                sem precisar publicar novo APK na Play Store.
+              </p>
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center gap-2 text-xs">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <span>Atualizações instantâneas</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <span>Sem aprovação da Play Store</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <span>Sempre sincronizado com o site</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Version Status */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`p-6 rounded-2xl border-2 ${
-          updateAvailable 
+        className={`p-4 rounded-2xl border ${
+          updateAvailable && updateMode === "apk"
             ? "bg-primary/10 border-primary" 
             : "bg-muted border-border"
         }`}
       >
         <div className="flex items-center gap-4">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
-            updateAvailable ? "bg-primary" : "bg-muted-foreground/20"
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+            updateMode === "live" ? "bg-primary" : updateAvailable ? "bg-primary" : "bg-muted-foreground/20"
           }`}>
-            {updateAvailable ? (
-              <Download className="w-8 h-8 text-white" />
+            {updateMode === "live" ? (
+              <CloudDownload className="w-6 h-6 text-white" />
+            ) : updateAvailable ? (
+              <Download className="w-6 h-6 text-white" />
             ) : (
-              <CheckCircle className="w-8 h-8 text-muted-foreground" />
+              <CheckCircle className="w-6 h-6 text-muted-foreground" />
             )}
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold">
-              {updateAvailable ? "Atualização Disponível" : "App Atualizado"}
+            <h3 className="font-bold">
+              {updateMode === "live" 
+                ? "Sincronização Ativa" 
+                : updateAvailable 
+                  ? "Atualização Disponível" 
+                  : "App Atualizado"
+              }
             </h3>
             <p className="text-sm text-muted-foreground">
-              Versão atual: {currentVersion} 
-              {updateAvailable && ` → ${latestVersion}`}
+              {updateMode === "live"
+                ? "Conectado ao servidor Lovable"
+                : `Versão: ${currentVersion}${updateAvailable ? ` → ${latestVersion}` : ""}`
+              }
             </p>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={checkForUpdates}
-            disabled={checking}
-            className="p-3 rounded-xl bg-muted hover:bg-muted/70"
-          >
-            <RefreshCw className={`w-5 h-5 ${checking ? "animate-spin" : ""}`} />
-          </motion.button>
+          {updateMode === "apk" && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={checkForUpdates}
+              disabled={checking}
+              className="p-3 rounded-xl bg-card border border-border hover:bg-muted"
+            >
+              <RefreshCw className={`w-5 h-5 ${checking ? "animate-spin" : ""}`} />
+            </motion.button>
+          )}
         </div>
         
-        {lastCheck && (
+        {lastCheck && updateMode === "apk" && (
           <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
             <Clock className="w-3 h-3" />
             Última verificação: {lastCheck.toLocaleString()}
@@ -185,125 +298,148 @@ const AdminUpdateSection = ({ onBack }: AdminUpdateSectionProps) => {
         )}
       </motion.div>
 
-      {/* Version Configuration */}
-      <div className="space-y-4">
-        <h3 className="font-semibold text-sm text-muted-foreground px-1">CONFIGURAR VERSÕES</h3>
+      {/* APK Mode Settings */}
+      {updateMode === "apk" && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="space-y-4"
+        >
+          <h3 className="font-semibold text-sm text-muted-foreground px-1">CONFIGURAR VERSÕES APK</h3>
 
-        <div className="grid grid-cols-2 gap-3">
-          {/* Current Version */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Current Version */}
+            <div className="bg-card rounded-xl p-4 border border-border">
+              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                <Smartphone className="w-4 h-4" />
+                <span className="text-xs font-medium">Versão Atual</span>
+              </div>
+              <input
+                type="text"
+                value={currentVersion}
+                onChange={(e) => setCurrentVersion(e.target.value)}
+                className="w-full p-2 bg-muted border border-border rounded-lg text-sm"
+                placeholder="1.0.0"
+              />
+            </div>
+
+            {/* Latest Version */}
+            <div className="bg-card rounded-xl p-4 border border-border">
+              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                <Globe className="w-4 h-4" />
+                <span className="text-xs font-medium">Última Versão</span>
+              </div>
+              <input
+                type="text"
+                value={latestVersion}
+                onChange={(e) => setLatestVersion(e.target.value)}
+                className="w-full p-2 bg-muted border border-border rounded-lg text-sm"
+                placeholder="1.1.0"
+              />
+            </div>
+          </div>
+
+          {/* Update URL */}
+          <div className="bg-card rounded-xl p-4 border border-border space-y-2">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <FileCode className="w-4 h-4" />
+              <span className="text-sm font-medium">URL de Download (APK)</span>
+            </div>
+            <input
+              type="url"
+              value={updateUrl}
+              onChange={(e) => setUpdateUrl(e.target.value)}
+              className="w-full p-3 bg-muted border border-border rounded-lg text-sm"
+              placeholder="https://exemplo.com/app-v1.1.0.apk"
+            />
+            <p className="text-xs text-muted-foreground">
+              Link direto para o arquivo APK ou página de download
+            </p>
+          </div>
+
+          {/* Update Message */}
+          <div className="bg-card rounded-xl p-4 border border-border space-y-2">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">Mensagem de Atualização</span>
+            </div>
+            <textarea
+              value={updateMessage}
+              onChange={(e) => setUpdateMessage(e.target.value)}
+              rows={2}
+              className="w-full p-3 bg-muted border border-border rounded-lg resize-none text-sm"
+              placeholder="Descreva as novidades desta versão..."
+            />
+          </div>
+
+          {/* Force Update Toggle */}
+          <div className="bg-card rounded-xl p-4 border border-border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Atualização Obrigatória</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Usuários serão forçados a atualizar
+                </p>
+              </div>
+              <button
+                onClick={() => setForceUpdate(!forceUpdate)}
+                className={`w-14 h-8 rounded-full transition-colors ${
+                  forceUpdate ? "bg-primary" : "bg-muted"
+                }`}
+              >
+                <motion.div
+                  animate={{ x: forceUpdate ? 24 : 4 }}
+                  className="w-6 h-6 rounded-full bg-white shadow"
+                />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Live Mode - Version Tracking */}
+      {updateMode === "live" && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="space-y-4"
+        >
+          <h3 className="font-semibold text-sm text-muted-foreground px-1">INFORMAÇÕES DO APP</h3>
+          
           <div className="bg-card rounded-xl p-4 border border-border">
             <div className="flex items-center gap-2 text-muted-foreground mb-2">
               <Smartphone className="w-4 h-4" />
-              <span className="text-xs font-medium">Versão Atual</span>
+              <span className="text-sm font-medium">Versão do APK Base</span>
             </div>
             <input
               type="text"
               value={currentVersion}
               onChange={(e) => setCurrentVersion(e.target.value)}
-              className="w-full p-2 bg-muted border border-border rounded-lg text-sm"
+              className="w-full p-3 bg-muted border border-border rounded-lg text-sm"
               placeholder="1.0.0"
             />
-          </div>
-
-          {/* Latest Version */}
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 text-muted-foreground mb-2">
-              <Globe className="w-4 h-4" />
-              <span className="text-xs font-medium">Última Versão</span>
-            </div>
-            <input
-              type="text"
-              value={latestVersion}
-              onChange={(e) => setLatestVersion(e.target.value)}
-              className="w-full p-2 bg-muted border border-border rounded-lg text-sm"
-              placeholder="1.1.0"
-            />
-          </div>
-        </div>
-
-        {/* Update URL */}
-        <div className="bg-card rounded-xl p-4 border border-border space-y-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <FileCode className="w-4 h-4" />
-            <span className="text-sm font-medium">URL de Download (APK)</span>
-          </div>
-          <input
-            type="url"
-            value={updateUrl}
-            onChange={(e) => setUpdateUrl(e.target.value)}
-            className="w-full p-3 bg-muted border border-border rounded-lg text-sm"
-            placeholder="https://exemplo.com/app-v1.1.0.apk"
-          />
-          <p className="text-xs text-muted-foreground">
-            Link direto para o arquivo APK ou página de download
-          </p>
-        </div>
-
-        {/* Update Message */}
-        <div className="bg-card rounded-xl p-4 border border-border space-y-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <AlertCircle className="w-4 h-4" />
-            <span className="text-sm font-medium">Mensagem de Atualização</span>
-          </div>
-          <textarea
-            value={updateMessage}
-            onChange={(e) => setUpdateMessage(e.target.value)}
-            rows={2}
-            className="w-full p-3 bg-muted border border-border rounded-lg resize-none text-sm"
-            placeholder="Descreva as novidades desta versão..."
-          />
-        </div>
-
-        {/* Force Update Toggle */}
-        <div className="bg-card rounded-xl p-4 border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Atualização Obrigatória</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Usuários serão forçados a atualizar para continuar usando
-              </p>
-            </div>
-            <button
-              onClick={() => setForceUpdate(!forceUpdate)}
-              className={`w-14 h-8 rounded-full transition-colors ${
-                forceUpdate ? "bg-primary" : "bg-muted"
-              }`}
-            >
-              <motion.div
-                animate={{ x: forceUpdate ? 24 : 4 }}
-                className="w-6 h-6 rounded-full bg-white shadow"
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Preview */}
-      <div className="space-y-2">
-        <h3 className="font-semibold text-sm text-muted-foreground px-1">PREVIEW DO POPUP</h3>
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <div className="text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Download className="w-8 h-8 text-primary" />
-            </div>
-            <h4 className="text-lg font-bold mb-2">Nova Versão Disponível</h4>
-            <p className="text-muted-foreground text-sm mb-2">{updateMessage}</p>
-            <p className="text-xs text-muted-foreground mb-4">
-              v{currentVersion} → v{latestVersion}
+            <p className="text-xs text-muted-foreground mt-2">
+              Esta é a versão do APK instalado. O conteúdo do app atualiza automaticamente.
             </p>
-            <div className="flex gap-2">
-              {!forceUpdate && (
-                <button className="flex-1 py-2 rounded-lg border border-border text-sm">
-                  Depois
-                </button>
-              )}
-              <button className="flex-1 py-2 rounded-lg bg-primary text-primary-foreground text-sm">
-                Atualizar Agora
-              </button>
+          </div>
+
+          <div className="bg-muted/50 rounded-xl p-4 border border-border">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-sm">Servidor Lovable</p>
+                <p className="text-xs text-muted-foreground">Todas as atualizações são automáticas</p>
+              </div>
+              <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                Online
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      )}
 
       {/* Save Button */}
       <motion.button
