@@ -74,39 +74,77 @@ const AppPage = () => {
         </AnimatePresence>
       </main>
 
-      {/* Floating Action Button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setActiveTab("camera")}
-        className="absolute bottom-24 right-4 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center z-50"
-      >
-        <Plus className="w-6 h-6" />
-      </motion.button>
-
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border max-w-md mx-auto">
-        <div className="flex items-center justify-around py-2">
-          {tabs.map((tab) => (
+      {/* Bottom Navigation - iOS Style */}
+      <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50">
+        <div className="relative">
+          {/* Glass Background */}
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-border/50" />
+          
+          {/* Navigation Items */}
+          <div className="relative flex items-end justify-around px-2 pb-6 pt-2">
+            {/* Left tabs */}
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-colors ${
-                activeTab === tab.id
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              }`}
+              onClick={() => setActiveTab("home")}
+              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all"
             >
-              <tab.icon className={`w-6 h-6 ${activeTab === tab.id ? "stroke-[2.5]" : ""}`} />
-              <span className="text-xs font-medium">{tab.label}</span>
-              {activeTab === tab.id && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-1 w-1 h-1 rounded-full bg-primary"
-                />
-              )}
+              <Home className={`w-6 h-6 transition-colors ${activeTab === "home" ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-[10px] font-medium transition-colors ${activeTab === "home" ? "text-primary" : "text-muted-foreground"}`}>
+                Home
+              </span>
             </button>
-          ))}
+
+            <button
+              onClick={() => setActiveTab("search")}
+              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all"
+            >
+              <Search className={`w-6 h-6 transition-colors ${activeTab === "search" ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-[10px] font-medium transition-colors ${activeTab === "search" ? "text-primary" : "text-muted-foreground"}`}>
+                Buscar
+              </span>
+            </button>
+
+            {/* Central Floating Button */}
+            <div className="flex flex-col items-center -mt-6">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveTab("camera")}
+                className={`w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center transition-all ${
+                  activeTab === "camera" 
+                    ? "bg-primary text-primary-foreground shadow-primary/30" 
+                    : "bg-primary text-primary-foreground shadow-primary/20"
+                }`}
+              >
+                <Plus className="w-7 h-7" />
+              </motion.button>
+              <span className={`text-[10px] font-medium mt-1 transition-colors ${activeTab === "camera" ? "text-primary" : "text-muted-foreground"}`}>
+                Scan
+              </span>
+            </div>
+
+            {/* Right tabs */}
+            <button
+              onClick={() => setActiveTab("profile")}
+              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all"
+            >
+              <User className={`w-6 h-6 transition-colors ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-[10px] font-medium transition-colors ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}>
+                Perfil
+              </span>
+            </button>
+
+            {/* More button placeholder for iOS style */}
+            <button
+              onClick={() => setActiveTab("profile")}
+              className="flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all opacity-0 pointer-events-none"
+            >
+              <User className="w-6 h-6" />
+              <span className="text-[10px] font-medium">Mais</span>
+            </button>
+          </div>
+
+          {/* iOS Home Indicator */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-foreground/20 rounded-full" />
         </div>
       </nav>
     </div>
