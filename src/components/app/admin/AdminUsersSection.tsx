@@ -18,6 +18,11 @@ const AdminUsersSection = ({ onBack }: AdminUsersSectionProps) => {
 
   useEffect(() => {
     loadData();
+    // Timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const loadData = async () => {
@@ -27,10 +32,12 @@ const AdminUsersSection = ({ onBack }: AdminUsersSectionProps) => {
         getAllUsers(),
         getAllUserRoles(),
       ]);
-      setUsers(usersData);
-      setUserRoles(rolesData);
+      setUsers(usersData || []);
+      setUserRoles(rolesData || []);
     } catch (error) {
       console.error("Error loading users:", error);
+      setUsers([]);
+      setUserRoles([]);
     } finally {
       setLoading(false);
     }
