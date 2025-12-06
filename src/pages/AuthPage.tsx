@@ -35,13 +35,20 @@ const AuthPage = () => {
           title: "Login realizado!",
           description: "Bem-vindo de volta!",
         });
-        navigate("/app");
+        
+        // Check if onboarding is complete
+        const isOnboardingComplete = localStorage.getItem('onboarding_complete');
+        if (isOnboardingComplete === 'true') {
+          navigate("/app");
+        } else {
+          navigate("/onboarding");
+        }
       } else {
         const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/app`,
+            emailRedirectTo: `${window.location.origin}/onboarding`,
             data: {
               full_name: formData.fullName,
             },
@@ -54,7 +61,8 @@ const AuthPage = () => {
           title: "Conta criada!",
           description: "Bem-vindo ao DogFitTdc Ai!",
         });
-        navigate("/app");
+        // New users always go to onboarding
+        navigate("/onboarding");
       }
     } catch (error: any) {
       console.error("Auth error:", error);

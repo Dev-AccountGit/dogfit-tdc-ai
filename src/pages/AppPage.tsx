@@ -18,6 +18,15 @@ const AppPage = () => {
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
+      return;
+    }
+    
+    // Check if onboarding is complete
+    if (!loading && user) {
+      const isOnboardingComplete = localStorage.getItem('onboarding_complete');
+      if (isOnboardingComplete !== 'true') {
+        navigate("/onboarding");
+      }
     }
   }, [user, loading, navigate]);
 
