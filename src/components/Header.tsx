@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import logo from "@/assets/logo.jpg";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -14,7 +15,7 @@ const Header = () => {
     >
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🐕</span>
+          <img src={logo} alt="DogFitTdc Ai" className="w-8 h-8 rounded-lg object-cover" />
           <span className="font-bold text-xl">DogFitTdc Ai</span>
         </a>
 

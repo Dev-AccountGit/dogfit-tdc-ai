@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile, type Profile } from "@/services/appService";
 import { useToast } from "@/hooks/use-toast";
+import logo from "@/assets/logo.jpg";
 
 const AppProfile = () => {
   const { user, signOut } = useAuth();
@@ -109,8 +110,8 @@ const AppProfile = () => {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-4"
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-3xl">
-          🐕
+        <div className="w-20 h-20 rounded-full overflow-hidden">
+          <img src={logo} alt="DogFitTdc Ai" className="w-full h-full object-cover" />
         </div>
         <div className="flex-1">
           <h1 className="text-xl font-bold">{profile?.full_name || "Usuário"}</h1>
