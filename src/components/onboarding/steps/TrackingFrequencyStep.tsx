@@ -1,27 +1,12 @@
 import { motion } from 'framer-motion';
-import { Calendar, CalendarDays, CalendarCheck } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
-const frequencies = [
-  { 
-    id: 'all', 
-    title: 'Todas as refeições', 
-    description: 'Acompanhamento completo',
-    icon: CalendarCheck 
-  },
-  { 
-    id: 'main', 
-    title: 'Refeições principais', 
-    description: 'Café, almoço e jantar',
-    icon: CalendarDays 
-  },
-  { 
-    id: 'sometimes', 
-    title: 'Quando lembrar', 
-    description: 'Sem pressão',
-    icon: Calendar 
-  },
+const options = [
+  { id: 'all', title: 'Cada refeição', description: 'Planejo registrar tudo que eu como' },
+  { id: 'main', title: 'Apenas refeições principais', description: 'Vou acompanhar apenas café da manhã, almoço e jantar' },
+  { id: 'remember', title: 'Quando eu lembrar', description: 'Vou acompanhar às vezes, mas não de forma consistente' },
+  { id: 'occasional', title: 'Ocasionalmente', description: 'Acompanharei minhas refeições de vez em quando, quando for necessário' },
 ];
 
 export const TrackingFrequencyStep = () => {
@@ -29,58 +14,42 @@ export const TrackingFrequencyStep = () => {
 
   const handleSelect = (id: string) => {
     updateData({ trackingFrequency: id });
-    setTimeout(() => setStep(19), 300);
+    setTimeout(() => setStep(23), 200);
   };
 
   return (
-    <OnboardingLayout>
-      <div className="flex-1 flex flex-col px-6 pt-8">
-        <h2 className="text-2xl font-bold text-white text-center mb-2">
-          Com que frequência quer registrar?
-        </h2>
-        <p className="text-white/70 text-center mb-8">
-          Quanto mais registrar, melhores os resultados
-        </p>
+    <OnboardingLayout category="Estilo De Vida">
+      <div className="flex-1 flex flex-col px-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-8">
+          Como você planeja acompanhar suas refeições?
+        </h1>
 
         <div className="space-y-3">
-          {frequencies.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.button
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleSelect(item.id)}
-                className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                  data.trackingFrequency === item.id
-                    ? 'bg-white shadow-lg'
-                    : 'bg-white/20 backdrop-blur-sm'
-                }`}
-              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  data.trackingFrequency === item.id ? 'bg-emerald-500' : 'bg-white/20'
-                }`}>
-                  <Icon className={`w-6 h-6 ${
-                    data.trackingFrequency === item.id ? 'text-white' : 'text-white'
-                  }`} />
-                </div>
-                <div className="text-left flex-1">
-                  <p className={`font-semibold ${
-                    data.trackingFrequency === item.id ? 'text-emerald-600' : 'text-white'
-                  }`}>
-                    {item.title}
-                  </p>
-                  <p className={`text-sm ${
-                    data.trackingFrequency === item.id ? 'text-gray-500' : 'text-white/70'
-                  }`}>
-                    {item.description}
-                  </p>
-                </div>
-              </motion.button>
-            );
-          })}
+          {options.map((option, index) => (
+            <motion.button
+              key={option.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => handleSelect(option.id)}
+              className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
+                data.trackingFrequency === option.id
+                  ? 'border-emerald-500 bg-emerald-50'
+                  : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
+              }`}
+            >
+              <p className={`font-semibold mb-1 ${
+                data.trackingFrequency === option.id ? 'text-emerald-700' : 'text-gray-700'
+              }`}>
+                {option.title}
+              </p>
+              <p className={`text-sm ${
+                data.trackingFrequency === option.id ? 'text-emerald-600' : 'text-gray-500'
+              }`}>
+                {option.description}
+              </p>
+            </motion.button>
+          ))}
         </div>
       </div>
     </OnboardingLayout>
