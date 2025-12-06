@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const CTASection = () => {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ const CTASection = () => {
             viewport={{ once: true }}
           >
             <div className="flex items-center gap-2 mb-6">
-              <img src={logo} alt="DogFitTdc Ai" className="w-10 h-10 rounded-lg object-cover" />
+              <img src={logo} alt="DogFitTdc Ai" className="w-14 h-14 object-contain" />
               <span className="font-bold text-2xl">DogFitTdc Ai</span>
             </div>
 

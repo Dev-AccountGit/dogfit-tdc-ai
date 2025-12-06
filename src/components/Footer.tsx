@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="DogFitTdc Ai" className="w-8 h-8 rounded-lg object-cover" />
+            <img src={logo} alt="DogFitTdc Ai" className="w-10 h-10 object-contain" />
             <span className="font-bold">DogFitTdc Ai</span>
           </div>
 

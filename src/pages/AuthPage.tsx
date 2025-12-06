@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const AuthPage = () => {
           animate={{ scale: 1, opacity: 1 }}
           className="inline-flex items-center gap-2 mb-2"
         >
-          <img src={logo} alt="DogFitTdc Ai" className="w-16 h-16 rounded-2xl object-cover" />
+          <img src={logo} alt="DogFitTdc Ai" className="w-24 h-24 object-contain" />
         </motion.div>
         <h1 className="text-2xl font-bold">DogFitTdc Ai</h1>
         <p className="text-muted-foreground text-sm mt-1">
