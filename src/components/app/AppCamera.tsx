@@ -10,11 +10,36 @@ import {
   SwitchCamera, 
   Focus,
   Sparkles,
-  ChevronDown
+  ChevronDown,
+  Lightbulb,
+  AlertCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { addMeal, getTodayStats, updateDailyStats } from "@/services/appService";
+import { supabase } from "@/integrations/supabase/client";
+
+interface FoodItem {
+  name: string;
+  portion?: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+interface AnalysisResult {
+  name: string;
+  items: FoodItem[];
+  total: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+  healthScore: number;
+  tips?: string;
+}
 
 const AppCamera = () => {
   const { toast } = useToast();
@@ -23,13 +48,13 @@ const AppCamera = () => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
-  const [isFlashOn, setIsFlashOn] = useState(false);
   const [isFocusing, setIsFocusing] = useState(false);
   const [mealType, setMealType] = useState("lunch");
   const [showMealTypeSelector, setShowMealTypeSelector] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,7 +72,6 @@ const AppCamera = () => {
     try {
       setCameraError(null);
       
-      // Stop any existing stream
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
@@ -71,11 +95,11 @@ const AppCamera = () => {
     } catch (error: any) {
       console.error("Camera error:", error);
       if (error.name === "NotAllowedError") {
-        setCameraError("Permissão da câmera negada. Ative nas configurações do navegador.");
+        setCameraError("Permissão da câmera negada. Ative nas configurações.");
       } else if (error.name === "NotFoundError") {
-        setCameraError("Nenhuma câmera encontrada no dispositivo.");
+        setCameraError("Nenhuma câmera encontrada.");
       } else {
-        setCameraError("Erro ao acessar a câmera. Tente novamente.");
+        setCameraError("Erro ao acessar a câmera.");
       }
     }
   }, [facingMode]);
@@ -93,10 +117,7 @@ const AppCamera = () => {
     } else {
       stopCamera();
     }
-
-    return () => {
-      stopCamera();
-    };
+    return () => stopCamera();
   }, [mode, startCamera, stopCamera]);
 
   const switchCamera = () => {
@@ -119,7 +140,7 @@ const AppCamera = () => {
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0);
 
-      const imageData = canvas.toDataURL("image/jpeg", 0.9);
+      const imageData = canvas.toDataURL("image/jpeg", 0.8);
       setCapturedImage(imageData);
       setMode("preview");
       setIsFocusing(false);
@@ -129,34 +150,86 @@ const AppCamera = () => {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Compress image before processing
       const reader = new FileReader();
       reader.onload = (event) => {
-        setCapturedImage(event.target?.result as string);
-        setMode("preview");
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxSize = 1024;
+          let { width, height } = img;
+          
+          if (width > height && width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          setCapturedImage(canvas.toDataURL("image/jpeg", 0.7));
+          setMode("preview");
+        };
+        img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
+    if (!capturedImage) return;
+    
     setAnalyzing(true);
-    // Simulate AI analysis
-    setTimeout(() => {
-      setResult({
-        name: "Prato Completo",
-        meal_type: mealType,
-        items: [
-          { name: "Arroz", calories: 200, protein: 4, carbs: 45, fat: 0.5 },
-          { name: "Feijão", calories: 120, protein: 8, carbs: 22, fat: 0.5 },
-          { name: "Frango grelhado", calories: 180, protein: 35, carbs: 0, fat: 4 },
-          { name: "Salada", calories: 30, protein: 1, carbs: 6, fat: 0.2 },
-        ],
-        total: { calories: 530, protein: 48, carbs: 73, fat: 5.2 },
-        healthScore: 8,
+    setAnalysisProgress(0);
+    
+    // Progress animation
+    const progressInterval = setInterval(() => {
+      setAnalysisProgress(prev => Math.min(prev + Math.random() * 15, 90));
+    }, 500);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-food", {
+        body: { image: capturedImage }
       });
-      setAnalyzing(false);
+
+      clearInterval(progressInterval);
+      setAnalysisProgress(100);
+
+      if (error) {
+        throw new Error(error.message || "Erro ao analisar");
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setResult({
+        name: data.name || "Refeição",
+        items: data.items || [],
+        total: data.total || { calories: 0, protein: 0, carbs: 0, fat: 0 },
+        healthScore: data.healthScore || 5,
+        tips: data.tips,
+      });
+      
       setMode("result");
-    }, 2500);
+    } catch (error: any) {
+      console.error("Error analyzing food:", error);
+      clearInterval(progressInterval);
+      
+      toast({
+        title: "Erro na análise",
+        description: error.message || "Não foi possível analisar a imagem.",
+        variant: "destructive",
+      });
+      
+      setAnalyzing(false);
+      setAnalysisProgress(0);
+    }
   };
 
   const handleAddToLog = async () => {
@@ -167,7 +240,7 @@ const AppCamera = () => {
       await addMeal({
         user_id: user.id,
         name: result.name,
-        meal_type: result.meal_type,
+        meal_type: mealType,
         calories: result.total.calories,
         protein: result.total.protein,
         carbs: result.total.carbs,
@@ -208,6 +281,8 @@ const AppCamera = () => {
     setMode("camera");
     setCapturedImage(null);
     setResult(null);
+    setAnalyzing(false);
+    setAnalysisProgress(0);
   };
 
   // Result Screen
@@ -223,7 +298,10 @@ const AppCamera = () => {
           <button onClick={handleReset} className="p-2 rounded-full bg-muted hover:bg-muted/80 transition-colors">
             <X className="w-5 h-5" />
           </button>
-          <h1 className="text-lg font-bold">Análise Nutricional</h1>
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <h1 className="text-lg font-bold">Análise IA</h1>
+          </div>
           <div className="w-9" />
         </div>
 
@@ -233,9 +311,9 @@ const AppCamera = () => {
             <img
               src={capturedImage!}
               alt="Food"
-              className="w-full aspect-video object-cover"
+              className="w-full aspect-video object-cover pointer-events-auto"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
               <div>
                 <p className="text-white/80 text-sm">Health Score</p>
@@ -259,6 +337,22 @@ const AppCamera = () => {
             </div>
           </div>
 
+          {/* Tips */}
+          {result.tips && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-primary/10 rounded-xl p-4 border border-primary/20"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Lightbulb className="w-4 h-4 text-primary" />
+                </div>
+                <p className="text-sm text-foreground/80">{result.tips}</p>
+              </div>
+            </motion.div>
+          )}
+
           {/* Nutrition Summary */}
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
@@ -280,7 +374,7 @@ const AppCamera = () => {
                 className="bg-card border border-border rounded-xl p-3 text-center"
               >
                 <div className={`w-2 h-2 rounded-full ${item.color} mx-auto mb-2`} />
-                <p className="text-lg font-bold">{item.value}</p>
+                <p className="text-lg font-bold">{Math.round(item.value)}</p>
                 <p className="text-xs text-muted-foreground">{item.unit}</p>
                 <p className="text-xs text-muted-foreground mt-1">{item.label}</p>
               </motion.div>
@@ -288,30 +382,42 @@ const AppCamera = () => {
           </motion.div>
 
           {/* Detected Items */}
-          <div className="space-y-2">
-            <h2 className="font-semibold text-sm text-muted-foreground px-1">ALIMENTOS DETECTADOS</h2>
-            {result.items.map((item: any, index: number) => (
-              <motion.div
-                key={item.name}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5 + index * 0.1 }}
-                className="bg-card rounded-xl p-4 border border-border flex items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    P: {item.protein}g • C: {item.carbs}g • G: {item.fat}g
-                  </p>
-                </div>
-                <span className="text-lg font-bold">{item.calories}</span>
-                <span className="text-xs text-muted-foreground">kcal</span>
-              </motion.div>
-            ))}
-          </div>
+          {result.items.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-semibold text-sm text-muted-foreground px-1">ALIMENTOS DETECTADOS</h2>
+              {result.items.map((item, index) => (
+                <motion.div
+                  key={`${item.name}-${index}`}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                  className="bg-card rounded-xl p-4 border border-border flex items-center gap-3"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {item.portion && `${item.portion} • `}P: {Math.round(item.protein)}g • C: {Math.round(item.carbs)}g • G: {Math.round(item.fat)}g
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold">{Math.round(item.calories)}</span>
+                    <span className="text-xs text-muted-foreground ml-1">kcal</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {result.items.length === 0 && (
+            <div className="bg-muted/50 rounded-xl p-6 text-center">
+              <AlertCircle className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">Nenhum alimento identificado com precisão.</p>
+              <p className="text-sm text-muted-foreground mt-1">Tente uma foto mais clara.</p>
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
@@ -328,7 +434,7 @@ const AppCamera = () => {
             <motion.button
               whileTap={{ scale: 0.98 }}
               onClick={handleAddToLog}
-              disabled={saving}
+              disabled={saving || result.items.length === 0}
               className="py-4 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {saving ? (
@@ -361,7 +467,7 @@ const AppCamera = () => {
           <img
             src={capturedImage!}
             alt="Preview"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain pointer-events-auto"
           />
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -409,6 +515,33 @@ const AppCamera = () => {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Analysis Progress Overlay */}
+          <AnimatePresence>
+            {analyzing && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="w-16 h-16 rounded-full border-4 border-primary/30 border-t-primary mb-4"
+                />
+                <p className="text-white text-lg font-medium mb-2">Analisando com IA...</p>
+                <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-primary rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${analysisProgress}%` }}
+                  />
+                </div>
+                <p className="text-white/60 text-sm mt-2">{Math.round(analysisProgress)}%</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="p-6 bg-gradient-to-t from-black via-black/90 to-transparent">
@@ -416,24 +549,10 @@ const AppCamera = () => {
             whileTap={{ scale: 0.98 }}
             onClick={handleAnalyze}
             disabled={analyzing}
-            className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-3 shadow-lg"
+            className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-3 shadow-lg disabled:opacity-50"
           >
-            {analyzing ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                >
-                  <Sparkles className="w-6 h-6" />
-                </motion.div>
-                <span>Analisando com IA...</span>
-              </>
-            ) : (
-              <>
-                <Zap className="w-6 h-6" />
-                <span>Analisar Alimentos</span>
-              </>
-            )}
+            <Sparkles className="w-6 h-6" />
+            <span>Analisar com IA</span>
           </motion.button>
         </div>
       </motion.div>
@@ -443,10 +562,8 @@ const AppCamera = () => {
   // Camera Screen
   return (
     <div className="h-full flex flex-col bg-black relative">
-      {/* Hidden Canvas for Capture */}
       <canvas ref={canvasRef} className="hidden" />
       
-      {/* Hidden File Input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -456,7 +573,6 @@ const AppCamera = () => {
         className="hidden"
       />
 
-      {/* Camera View */}
       <div className="flex-1 relative overflow-hidden">
         {cameraError ? (
           <div className="h-full flex flex-col items-center justify-center p-8 text-center">
@@ -484,7 +600,6 @@ const AppCamera = () => {
               className="w-full h-full object-cover"
             />
 
-            {/* Focus Animation */}
             <AnimatePresence>
               {isFocusing && (
                 <motion.div
@@ -504,7 +619,6 @@ const AppCamera = () => {
               )}
             </AnimatePresence>
 
-            {/* Overlay Frame */}
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute inset-8 border-2 border-white/20 rounded-3xl" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16">
@@ -512,7 +626,6 @@ const AppCamera = () => {
               </div>
             </div>
 
-            {/* Top Controls */}
             <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4">
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -536,7 +649,6 @@ const AppCamera = () => {
               </motion.button>
             </div>
 
-            {/* Instructions */}
             <div className="absolute bottom-40 left-0 right-0 text-center">
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
@@ -553,10 +665,8 @@ const AppCamera = () => {
         )}
       </div>
 
-      {/* Bottom Controls */}
       <div className="absolute bottom-0 left-0 right-0 pb-8 pt-4 bg-gradient-to-t from-black via-black/80 to-transparent">
         <div className="flex items-center justify-center gap-8">
-          {/* Gallery Button */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => fileInputRef.current?.click()}
@@ -565,7 +675,6 @@ const AppCamera = () => {
             <Image className="w-6 h-6 text-white" />
           </motion.button>
 
-          {/* Capture Button */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleCapture}
@@ -578,7 +687,6 @@ const AppCamera = () => {
                 className="w-16 h-16 rounded-full bg-white"
               />
             </div>
-            {/* Animated Ring */}
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
@@ -586,7 +694,6 @@ const AppCamera = () => {
             />
           </motion.button>
 
-          {/* Meal Type Quick Select */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setShowMealTypeSelector(!showMealTypeSelector)}
@@ -596,7 +703,6 @@ const AppCamera = () => {
           </motion.button>
         </div>
 
-        {/* Meal Type Selector Popup */}
         <AnimatePresence>
           {showMealTypeSelector && (
             <motion.div
