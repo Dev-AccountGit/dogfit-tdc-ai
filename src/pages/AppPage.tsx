@@ -8,6 +8,7 @@ import AppCamera from "@/components/app/AppCamera";
 import AppSearch from "@/components/app/AppSearch";
 import AppProfile from "@/components/app/AppProfile";
 import AppMore from "@/components/app/AppMore";
+import AppHistory from "@/components/app/AppHistory";
 
 const AppPage = () => {
   const { user, loading } = useAuth();
@@ -46,7 +47,7 @@ const AppPage = () => {
       case "profile":
         return <AppProfile />;
       case "mais":
-        return <AppMore />;
+        return <AppHistory />;
       default:
         return <AppDashboard />;
     }
