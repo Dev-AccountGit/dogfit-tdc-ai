@@ -165,8 +165,6 @@ const AppPage = () => {
             </button>
           </div>
 
-          {/* iOS Home Indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-foreground/15 rounded-full" />
         </div>
       </nav>
     </div>
