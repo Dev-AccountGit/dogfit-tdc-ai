@@ -114,21 +114,6 @@ const AppPage = () => {
             </button>
           </div>
 
-          {/* Histórico */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("profile")}
-            className="flex flex-col items-center justify-center py-3 gap-1"
-          >
-            <History 
-              className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
-              strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
-            />
-            <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              Histórico
-            </span>
-          </button>
-
           {/* Mais */}
           <button
             type="button"
@@ -141,6 +126,21 @@ const AppPage = () => {
             />
             <span className={`text-[10px] ${activeTab === "mais" ? "text-primary font-medium" : "text-muted-foreground"}`}>
               Mais
+            </span>
+          </button>
+
+          {/* Histórico */}
+          <button
+            type="button"
+            onClick={() => setActiveTab("profile")}
+            className="flex flex-col items-center justify-center py-3 gap-1"
+          >
+            <History 
+              className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
+              strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
+            />
+            <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+              Histórico
             </span>
           </button>
         </div>
