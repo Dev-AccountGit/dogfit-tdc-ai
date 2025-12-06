@@ -42,12 +42,16 @@ const AppMore = () => {
   }, [user]);
 
   const loadAdminStatus = async () => {
-    if (!user) return;
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
     try {
       const adminStatus = await checkIsAdmin(user.id);
       setIsAdmin(adminStatus);
     } catch (error) {
       console.error("Error checking admin status:", error);
+      setIsAdmin(false);
     }
   };
 
