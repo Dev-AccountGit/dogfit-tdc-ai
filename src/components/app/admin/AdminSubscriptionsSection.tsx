@@ -21,6 +21,11 @@ const AdminSubscriptionsSection = ({ onBack }: AdminSubscriptionsSectionProps) =
 
   useEffect(() => {
     loadData();
+    // Timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const loadData = async () => {
@@ -30,10 +35,12 @@ const AdminSubscriptionsSection = ({ onBack }: AdminSubscriptionsSectionProps) =
         getAllSubscriptions(),
         getAllUsers(),
       ]);
-      setSubscriptions(subsData);
-      setUsers(usersData);
+      setSubscriptions(subsData || []);
+      setUsers(usersData || []);
     } catch (error) {
       console.error("Error loading subscriptions:", error);
+      setSubscriptions([]);
+      setUsers([]);
     } finally {
       setLoading(false);
     }

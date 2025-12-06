@@ -27,6 +27,11 @@ const AdminApiKeysSection = ({ onBack }: AdminApiKeysSectionProps) => {
 
   useEffect(() => {
     loadSettings();
+    // Timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const loadSettings = async () => {
@@ -34,12 +39,13 @@ const AdminApiKeysSection = ({ onBack }: AdminApiKeysSectionProps) => {
     try {
       const data = await getAppSettings();
       // Filter only API key related settings
-      const apiSettings = data.filter((s: any) => 
+      const apiSettings = (data || []).filter((s: any) => 
         s.key.includes("API_KEY") || s.key.includes("_AI_") || s.key.includes("AI_")
       );
       setSettings(apiSettings);
     } catch (error) {
       console.error("Error loading settings:", error);
+      setSettings([]);
     } finally {
       setLoading(false);
     }
