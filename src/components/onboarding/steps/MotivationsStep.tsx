@@ -1,18 +1,17 @@
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Sparkles, Heart, Zap, Brain, Shield, Leaf, Calendar, Smile } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
 const motivations = [
-  { id: 'appearance', label: 'Aparência Melhor', emoji: '✨' },
-  { id: 'confidence', label: 'Sentir-se Mais Confiante', emoji: '💪' },
-  { id: 'occasion', label: 'Ocasião Especial', emoji: '🎉' },
-  { id: 'health', label: 'Melhorar a Saúde', emoji: '❤️' },
-  { id: 'energy', label: 'Aumentar Energia', emoji: '⚡' },
-  { id: 'stress', label: 'Liberar Estresse', emoji: '🧘' },
-  { id: 'immune', label: 'Melhorar Sistema Imunológico', emoji: '🛡️' },
-  { id: 'mental', label: 'Melhorar Clareza Mental', emoji: '🧠' },
-  { id: 'detox', label: 'Desintoxicar e Purificar', emoji: '🌿' },
+  { id: 'appearance', label: 'Aparência Melhor', icon: Sparkles, color: 'text-amber-500', bg: 'bg-amber-50' },
+  { id: 'confidence', label: 'Mais Confiança', icon: Smile, color: 'text-pink-500', bg: 'bg-pink-50' },
+  { id: 'occasion', label: 'Ocasião Especial', icon: Calendar, color: 'text-purple-500', bg: 'bg-purple-50' },
+  { id: 'health', label: 'Melhorar Saúde', icon: Heart, color: 'text-red-500', bg: 'bg-red-50' },
+  { id: 'energy', label: 'Aumentar Energia', icon: Zap, color: 'text-yellow-500', bg: 'bg-yellow-50' },
+  { id: 'mental', label: 'Clareza Mental', icon: Brain, color: 'text-indigo-500', bg: 'bg-indigo-50' },
+  { id: 'immune', label: 'Sistema Imunológico', icon: Shield, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { id: 'detox', label: 'Desintoxicar', icon: Leaf, color: 'text-green-500', bg: 'bg-green-50' },
 ];
 
 export const MotivationsStep = () => {
@@ -31,55 +30,76 @@ export const MotivationsStep = () => {
   return (
     <OnboardingLayout category="Meta & Foco">
       <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          O que te motiva a seguir em direção à sua meta?
-        </h1>
+        <motion.h1 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-[26px] font-bold text-foreground mb-2 tracking-tight"
+        >
+          O que te motiva?
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-muted-foreground text-[15px] mb-6"
+        >
+          Selecione todas as opções que se aplicam
+        </motion.p>
 
-        <div className="space-y-2 flex-1 overflow-y-auto">
+        <div className="grid grid-cols-2 gap-3 flex-1 overflow-y-auto pb-4">
           {motivations.map((item, index) => {
+            const Icon = item.icon;
             const isSelected = data.motivations?.includes(item.id);
+            
             return (
               <motion.button
                 key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.03 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 + index * 0.04, ease: [0.32, 0.72, 0, 1] }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => toggleMotivation(item.id)}
-                className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
                   isSelected
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-gray-100 bg-gray-50'
+                    ? 'border-primary bg-primary/5 shadow-md shadow-primary/10'
+                    : 'border-border bg-white hover:border-primary/30'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{item.emoji}</span>
-                  <span className={`font-medium ${isSelected ? 'text-emerald-700' : 'text-gray-700'}`}>
-                    {item.label}
-                  </span>
-                </div>
                 {isSelected && (
-                  <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                  >
+                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                  </motion.div>
                 )}
+                <div className={`w-12 h-12 rounded-2xl ${item.bg} flex items-center justify-center`}>
+                  <Icon className={`w-6 h-6 ${item.color}`} />
+                </div>
+                <span className={`font-medium text-sm text-center ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                  {item.label}
+                </span>
               </motion.button>
             );
           })}
         </div>
       </div>
 
-      <div className="px-6 pb-8 pt-4 safe-area-bottom">
+      <div className="px-6 pb-10 pt-4 safe-area-bottom">
         <motion.button
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: canContinue ? 1.02 : 1 }}
+          whileTap={{ scale: canContinue ? 0.98 : 1 }}
           onClick={() => setStep(9)}
           disabled={!canContinue}
-          className={`w-full font-semibold py-4 rounded-full transition-all ${
+          className={`w-full font-semibold py-4 rounded-2xl transition-all text-[17px] ${
             canContinue
-              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-              : 'bg-gray-200 text-gray-400'
+              ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+              : 'bg-muted text-muted-foreground'
           }`}
         >
-          Próximo
+          Continuar
         </motion.button>
       </div>
     </OnboardingLayout>
