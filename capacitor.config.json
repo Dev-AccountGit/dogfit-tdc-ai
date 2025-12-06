@@ -1,0 +1,31 @@
+{
+  "appId": "app.lovable.621d6b29e871482da0b0360aa50dacf1",
+  "appName": "DogFitTdc AI",
+  "webDir": "dist",
+  "server": {
+    "url": "https://621d6b29-e871-482d-a0b0-360aa50dacf1.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "allowsLinkPreview": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#000000",
+      "showSpinner": false,
+      "androidSpinnerStyle": "small",
+      "spinnerColor": "#ffffff"
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#000000"
+    }
+  }
+}
