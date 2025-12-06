@@ -79,99 +79,104 @@ const AppPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
-      {/* Main Content */}
-      <main className="flex-1 pb-20 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="h-full"
-          >
-            {renderContent()}
-          </motion.div>
-        </AnimatePresence>
-      </main>
+    <MaintenanceCheck>
+      {/* Update Checker Modal */}
+      <UpdateChecker />
+      
+      <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
+        {/* Main Content */}
+        <main className="flex-1 pb-20 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="h-full"
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-background border-t border-border">
-        <div className="grid grid-cols-5 w-full">
-          {/* Home */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("home")}
-            className="flex flex-col items-center justify-center py-3 gap-1"
-          >
-            <Home 
-              className={`w-6 h-6 ${activeTab === "home" ? "text-primary" : "text-muted-foreground"}`} 
-              strokeWidth={activeTab === "home" ? 2.5 : 1.5}
-            />
-            <span className={`text-[10px] ${activeTab === "home" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              Home
-            </span>
-          </button>
-
-          {/* Agenda */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("search")}
-            className="flex flex-col items-center justify-center py-3 gap-1"
-          >
-            <Calendar 
-              className={`w-6 h-6 ${activeTab === "search" ? "text-primary" : "text-muted-foreground"}`}
-              strokeWidth={activeTab === "search" ? 2.5 : 1.5}
-            />
-            <span className={`text-[10px] ${activeTab === "search" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              Agenda
-            </span>
-          </button>
-
-          {/* Central Button */}
-          <div className="flex items-center justify-center">
+        {/* Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-background border-t border-border">
+          <div className="grid grid-cols-5 w-full">
+            {/* Home */}
             <button
               type="button"
-              onClick={() => setActiveTab("camera")}
-              className="w-14 h-14 -mt-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg"
+              onClick={() => setActiveTab("home")}
+              className="flex flex-col items-center justify-center py-3 gap-1"
             >
-              <Plus className="w-7 h-7" strokeWidth={2.5} />
+              <Home 
+                className={`w-6 h-6 ${activeTab === "home" ? "text-primary" : "text-muted-foreground"}`} 
+                strokeWidth={activeTab === "home" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "home" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                Home
+              </span>
+            </button>
+
+            {/* Agenda */}
+            <button
+              type="button"
+              onClick={() => setActiveTab("search")}
+              className="flex flex-col items-center justify-center py-3 gap-1"
+            >
+              <Calendar 
+                className={`w-6 h-6 ${activeTab === "search" ? "text-primary" : "text-muted-foreground"}`}
+                strokeWidth={activeTab === "search" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "search" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                Agenda
+              </span>
+            </button>
+
+            {/* Central Button */}
+            <div className="flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => setActiveTab("camera")}
+                className="w-14 h-14 -mt-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg"
+              >
+                <Plus className="w-7 h-7" strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Histórico */}
+            <button
+              type="button"
+              onClick={() => setActiveTab("mais")}
+              className="flex flex-col items-center justify-center py-3 gap-1"
+            >
+              <History 
+                className={`w-6 h-6 ${activeTab === "mais" ? "text-primary" : "text-muted-foreground"}`}
+                strokeWidth={activeTab === "mais" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "mais" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                Histórico
+              </span>
+            </button>
+
+            {/* Mais */}
+            <button
+              type="button"
+              onClick={() => setActiveTab("profile")}
+              className="flex flex-col items-center justify-center py-3 gap-1"
+            >
+              <MoreHorizontal 
+                className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
+                strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                Mais
+              </span>
             </button>
           </div>
-
-          {/* Histórico */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("mais")}
-            className="flex flex-col items-center justify-center py-3 gap-1"
-          >
-            <History 
-              className={`w-6 h-6 ${activeTab === "mais" ? "text-primary" : "text-muted-foreground"}`}
-              strokeWidth={activeTab === "mais" ? 2.5 : 1.5}
-            />
-            <span className={`text-[10px] ${activeTab === "mais" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              Histórico
-            </span>
-          </button>
-
-          {/* Mais */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("profile")}
-            className="flex flex-col items-center justify-center py-3 gap-1"
-          >
-            <MoreHorizontal 
-              className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
-              strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
-            />
-            <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              Mais
-            </span>
-          </button>
-        </div>
-      </nav>
-    </div>
+        </nav>
+      </div>
+    </MaintenanceCheck>
   );
 };
 
