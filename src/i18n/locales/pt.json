@@ -1,0 +1,115 @@
+{
+  "header": {
+    "home": "Início",
+    "features": "Recursos",
+    "reviews": "Avaliações",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "hero": {
+    "lovedBy": "Amado por",
+    "users": "5M usuários",
+    "with": "com",
+    "rating": "4.9 de avaliação",
+    "title1": "Conheça o DogFitTdc Ai",
+    "title2": "Rastreie suas calorias",
+    "title3": "com apenas uma foto",
+    "description": "Conheça o DogFitTdc Ai, o app com IA para rastreamento fácil de calorias. Tire uma foto, escaneie um código de barras ou descreva sua refeição e obtenha informações instantâneas sobre calorias e nutrientes.",
+    "downloadOn": "Baixar no",
+    "getItOn": "DISPONÍVEL NO"
+  },
+  "influencers": {
+    "title": "Usado pelos seus influenciadores fitness favoritos 👀",
+    "quotes": {
+      "jeremiah": "Faça uma escolha mais saudável para seu lanche da noite e use o app DogFitTdc Ai para rastrear suas calorias",
+      "kadin": "Sempre bem e minhas calorias também com o DogFitTdc Ai 🔥",
+      "dawson": "Rastreie com o app DogFitTdc Ai, se você não está rastreando suas calorias enquanto busca seus objetivos, está fazendo tudo errado.",
+      "brian": "O DogFitTdc Ai consegue rastrear literalmente qualquer coisa 🤯",
+      "hussein": "Se você está rastreando suas calorias e macros corretamente com o DogFitTdc Ai, você pode comer quase qualquer coisa e ainda ficar em forma.",
+      "alex": "O DogFitTdc Ai é literalmente o melhor rastreador de calorias. O mais rápido e preciso que já usei."
+    }
+  },
+  "features": {
+    "title": "O que o DogFitTdc Ai inclui?",
+    "picture": {
+      "title": "Rastreie Sua Comida Com Apenas Uma Foto",
+      "description": "Tire uma foto com o DogFitTdc Ai, e o sensor de profundidade do seu celular calcula o volume da comida. Nossa IA então analisa e decompõe sua refeição para determinar calorias, proteínas, carboidratos e gorduras."
+    },
+    "database": {
+      "title": "Pesquise Nosso Banco de Dados com mais de 1 milhão de alimentos",
+      "description": "Encontre e registre alimentos rapidamente em nosso extenso banco de dados. Pesquise por nome, marca ou escaneie códigos de barras para informações nutricionais instantâneas."
+    },
+    "progress": {
+      "title": "Acompanhamento Completo de Progresso e sugestões de IA",
+      "description": "Monitore seu peso, medidas e metas nutricionais. Receba sugestões personalizadas de IA para manter-se no caminho certo e otimizar sua dieta."
+    },
+    "water": {
+      "title": "Acompanhe sua água e exercícios diários",
+      "description": "Registre sua ingestão de água e exercícios diários sem esforço. O DogFitTdc Ai ajuda você a se manter hidratado e ativo, integrando-se perfeitamente à sua rotina de fitness."
+    }
+  },
+  "whyChoose": {
+    "title": "Por que escolher o DogFitTdc Ai?",
+    "subtitle": "O DogFitTdc Ai é o rastreador de calorias mais avançado.",
+    "time": {
+      "title": "Economize seu tempo",
+      "description": "O DogFitTdc Ai calcula automaticamente suas calorias, proteínas, carboidratos e gorduras. Você também pode adicionar seus próprios alimentos e receitas. Sem necessidade de calcular calorias manualmente."
+    },
+    "integrate": {
+      "title": "Integre com seus produtos fitness favoritos",
+      "description": "O DogFitTdc Ai integra-se com seus produtos fitness favoritos. Assim você pode rastrear suas calorias, proteínas, carboidratos, gorduras E exercícios."
+    },
+    "weight": {
+      "title": "Perca peso sem esforço",
+      "description": "Tire uma foto com o DogFitTdc Ai, e o sensor de profundidade do seu celular calcula o volume da comida. Nossa IA então analisa e decompõe sua refeição para determinar calorias, proteínas, carboidratos e gorduras."
+    }
+  },
+  "darkMode": {
+    "newFeature": "Novo recurso",
+    "title1": "Modo Escuro",
+    "title2": "para uma experiência",
+    "title3": "elegante! 🌙✨",
+    "subtitle": "Novos recursos toda semana :)",
+    "easyOnEyes": "Confortável para os olhos",
+    "batteryEfficient": "Economiza bateria",
+    "today": "Hoje",
+    "remaining": "restantes",
+    "protein": "Proteína",
+    "carbs": "Carbos",
+    "fat": "Gordura",
+    "lunch": "Almoço"
+  },
+  "reviews": {
+    "title": "Milhares de usuários falam sobre nós",
+    "testimonials": {
+      "pree": "vou ser sincera, perdi 7kg com ele, não precisa ser exato, é bem decente",
+      "tony": "ESTOU EM BULKING HÁ UM ANO COM ESSE APP 👏👏👏",
+      "weightloss": "Amo seu app, me ajuda a acompanhar minha comida sem pensar demais e me dá uma visão das minhas porções, além de ser muito estético 💓",
+      "mathias": "Comecei a usar ontem e já estou dando 5⭐️",
+      "nsofor": "Para quem quer controlar suas calorias, o @calai.app é o app para você 🙌🔥",
+      "jessica": "Melhor app de rastreamento de calorias que já usei! A IA é super precisa 🎯"
+    }
+  },
+  "ratings": {
+    "title": "Mais de 100 mil avaliações 5 estrelas"
+  },
+  "cta": {
+    "title1": "GARANTA SEU TESTE",
+    "title2": "GRÁTIS DE 3 DIAS",
+    "disclaimer": "Ao se inscrever, você concorda com nossos Termos de Serviço e Política de Privacidade. Sem compromisso. Cancele a qualquer momento."
+  },
+  "footer": {
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço",
+    "contact": "Contato",
+    "copyright": "© 2024 DogFitTdc Ai. Todos os direitos reservados."
+  },
+  "nutrition": {
+    "calories": "Calorias",
+    "carbs": "Carbos",
+    "protein": "Proteína",
+    "fats": "Gorduras",
+    "healthScore": "Pontuação de saúde",
+    "breakfast": "Café da manhã"
+  }
+}
