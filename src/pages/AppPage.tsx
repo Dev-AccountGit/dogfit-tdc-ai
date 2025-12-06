@@ -74,7 +74,7 @@ const AppPage = () => {
             {/* Home */}
             <button
               onClick={() => setActiveTab("home")}
-              className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors"
+              className="flex flex-col items-center gap-0.5 min-w-[60px] py-2 transition-colors"
             >
               <Home 
                 className={`w-6 h-6 ${activeTab === "home" ? "text-primary" : "text-muted-foreground"}`} 
@@ -88,7 +88,7 @@ const AppPage = () => {
             {/* Agenda */}
             <button
               onClick={() => setActiveTab("search")}
-              className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors"
+              className="flex flex-col items-center gap-0.5 min-w-[60px] py-2 transition-colors"
             >
               <Calendar 
                 className={`w-6 h-6 ${activeTab === "search" ? "text-primary" : "text-muted-foreground"}`}
@@ -110,7 +110,7 @@ const AppPage = () => {
             {/* Histórico */}
             <button
               onClick={() => setActiveTab("profile")}
-              className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors"
+              className="flex flex-col items-center gap-0.5 min-w-[60px] py-2 transition-colors"
             >
               <History 
                 className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
@@ -122,7 +122,10 @@ const AppPage = () => {
             </button>
 
             {/* Mais */}
-            <button className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors">
+            <button
+              onClick={() => {}}
+              className="flex flex-col items-center gap-0.5 min-w-[60px] py-2 transition-colors"
+            >
               <MoreHorizontal className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
               <span className="text-[10px] text-muted-foreground">
                 Mais
