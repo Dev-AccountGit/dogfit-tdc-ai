@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile, type Profile } from "@/services/appService";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const AppProfile = () => {
   const { user, signOut } = useAuth();
@@ -110,8 +110,8 @@ const AppProfile = () => {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-4"
       >
-        <div className="w-20 h-20 rounded-full overflow-hidden">
-          <img src={logo} alt="DogFitTdc Ai" className="w-full h-full object-cover" />
+        <div className="w-24 h-24">
+          <img src={logo} alt="DogFitTdc Ai" className="w-full h-full object-contain" />
         </div>
         <div className="flex-1">
           <h1 className="text-xl font-bold">{profile?.full_name || "Usuário"}</h1>

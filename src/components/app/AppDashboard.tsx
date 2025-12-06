@@ -13,7 +13,7 @@ import {
   type Profile
 } from "@/services/appService";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const mealTypeEmojis: Record<string, string> = {
   breakfast: "🍳",
@@ -104,8 +104,8 @@ const AppDashboard = () => {
           <h1 className="text-2xl font-bold">Olá! 👋</h1>
           <p className="text-muted-foreground text-sm">Vamos atingir suas metas hoje</p>
         </div>
-        <div className="w-10 h-10 rounded-full overflow-hidden">
-          <img src={logo} alt="DogFitTdc Ai" className="w-full h-full object-cover" />
+        <div className="w-12 h-12">
+          <img src={logo} alt="DogFitTdc Ai" className="w-full h-full object-contain" />
         </div>
       </div>
 
