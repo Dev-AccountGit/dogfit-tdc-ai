@@ -15,19 +15,11 @@ const AppPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
 
-  const isOnboardingComplete = localStorage.getItem('onboarding_complete') === 'true';
-
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
-      return;
     }
-    
-    // Check if onboarding is complete
-    if (!loading && user && !isOnboardingComplete) {
-      navigate("/onboarding");
-    }
-  }, [user, loading, navigate, isOnboardingComplete]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -40,15 +32,8 @@ const AppPage = () => {
     );
   }
 
-  if (!user || !isOnboardingComplete) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Redirecionando...</p>
-        </div>
-      </div>
-    );
+  if (!user) {
+    return null;
   }
 
   const renderContent = () => {

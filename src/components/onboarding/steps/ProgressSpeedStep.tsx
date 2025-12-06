@@ -1,83 +1,96 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Turtle, Rabbit, Zap } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
+const speeds = [
+  { 
+    id: 'slow', 
+    title: 'Devagar e constante', 
+    description: 'Perda gradual e sustentável',
+    rate: '0.25-0.5 kg/semana',
+    icon: Turtle,
+    color: 'from-blue-400 to-cyan-400'
+  },
+  { 
+    id: 'moderate', 
+    title: 'Ritmo moderado', 
+    description: 'Equilíbrio entre velocidade e conforto',
+    rate: '0.5-0.75 kg/semana',
+    icon: Rabbit,
+    color: 'from-emerald-400 to-green-400'
+  },
+  { 
+    id: 'fast', 
+    title: 'Acelerado', 
+    description: 'Resultados mais rápidos, mais esforço',
+    rate: '0.75-1 kg/semana',
+    icon: Zap,
+    color: 'from-orange-400 to-red-400'
+  },
+];
+
 export const ProgressSpeedStep = () => {
   const { data, updateData, setStep } = useOnboarding();
-  const [speed, setSpeed] = useState(data.progressSpeed || 0.5);
 
-  const getSpeedLabel = () => {
-    if (speed <= 0.3) return 'Lento';
-    if (speed <= 0.6) return 'Ótimo';
-    return 'Rápido';
+  const handleSelect = (id: string) => {
+    updateData({ progressSpeed: id });
+    setTimeout(() => setStep(17), 300);
   };
-
-  const handleContinue = () => {
-    updateData({ progressSpeed: speed });
-    setStep(20);
-  };
-
-  const isLoss = data.mainGoal === 'lose';
-  const speedText = isLoss ? 'perda' : 'ganho';
 
   return (
-    <OnboardingLayout category="Estilo De Vida">
-      <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Com que rapidez você quer atingir seu objetivo?
-        </h1>
-        <p className="text-gray-500 mb-8">
-          Taxa de {speedText} de peso por semana
+    <OnboardingLayout>
+      <div className="flex-1 flex flex-col px-6 pt-8">
+        <h2 className="text-2xl font-bold text-white text-center mb-2">
+          Velocidade do progresso
+        </h2>
+        <p className="text-white/70 text-center mb-8">
+          Em que ritmo você quer alcançar seu objetivo?
         </p>
 
-        <div className="flex-1 flex flex-col items-center justify-center">
-          {/* Speed display */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-emerald-100 rounded-3xl p-6 mb-8 border-2 border-emerald-500"
-          >
-            <div className="text-center">
-              <span className="text-emerald-600 text-sm font-medium">{getSpeedLabel()}</span>
-              <p className="text-4xl font-bold text-emerald-700">{speed} kg</p>
-            </div>
-          </motion.div>
-
-          {/* Slider */}
-          <div className="w-full max-w-xs mb-6">
-            <input
-              type="range"
-              min="0.25"
-              max="1"
-              step="0.25"
-              value={speed}
-              onChange={(e) => setSpeed(parseFloat(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-            />
-            <div className="flex justify-between text-xs text-gray-400 mt-2">
-              <span>0.25 kg</span>
-              <span>1 kg</span>
-            </div>
-          </div>
-
-          {/* Warning */}
-          <p className="text-sm text-gray-500 text-center max-w-xs">
-            {speedText === 'perda' 
-              ? 'Perda de peso rápida (0.6-0.8 kg/semana) pode acelerar os resultados, mas pode não ser sustentável.'
-              : 'Ganho de peso rápido (0.6-0.8 kg/semana) pode acelerar os resultados, mas pode aumentar o ganho de gordura.'}
-          </p>
+        <div className="space-y-4">
+          {speeds.map((speed, index) => {
+            const Icon = speed.icon;
+            return (
+              <motion.button
+                key={speed.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSelect(speed.id)}
+                className={`w-full p-4 rounded-2xl transition-all ${
+                  data.progressSpeed === speed.id
+                    ? 'bg-white shadow-lg'
+                    : 'bg-white/20 backdrop-blur-sm'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${speed.color} flex items-center justify-center`}>
+                    <Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <p className={`font-semibold ${
+                      data.progressSpeed === speed.id ? 'text-emerald-600' : 'text-white'
+                    }`}>
+                      {speed.title}
+                    </p>
+                    <p className={`text-sm ${
+                      data.progressSpeed === speed.id ? 'text-gray-500' : 'text-white/70'
+                    }`}>
+                      {speed.description}
+                    </p>
+                    <p className={`text-xs mt-1 font-medium ${
+                      data.progressSpeed === speed.id ? 'text-emerald-500' : 'text-white/50'
+                    }`}>
+                      {speed.rate}
+                    </p>
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
-      </div>
-
-      <div className="px-6 pb-8 safe-area-bottom">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={handleContinue}
-          className="w-full bg-emerald-500 text-white font-semibold py-4 rounded-full shadow-lg shadow-emerald-500/30"
-        >
-          Próximo
-        </motion.button>
       </div>
     </OnboardingLayout>
   );

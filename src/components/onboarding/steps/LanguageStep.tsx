@@ -4,16 +4,9 @@ import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
 const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Español' },
-  { code: 'pt-BR', name: 'Português (Brasil)' },
-  { code: 'pt', name: 'Português' },
-  { code: 'fr', name: 'Français' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'ru', name: 'Русский' },
-  { code: 'it', name: 'Italiano' },
-  { code: 'nl', name: 'Nederlands' },
-  { code: 'pl', name: 'Polski' },
+  { code: 'pt', name: 'Português', flag: '🇧🇷' },
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
 ];
 
 export const LanguageStep = () => {
@@ -21,35 +14,42 @@ export const LanguageStep = () => {
 
   const handleSelect = (code: string) => {
     updateData({ language: code });
-    setTimeout(() => setStep(3), 200);
+    setTimeout(() => setStep(3), 300);
   };
 
   return (
-    <OnboardingLayout showProgress={false}>
-      <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          Idioma da Interface
-        </h1>
+    <OnboardingLayout>
+      <div className="flex-1 flex flex-col px-6 pt-8">
+        <h2 className="text-2xl font-bold text-white text-center mb-2">
+          Escolha seu idioma
+        </h2>
+        <p className="text-white/70 text-center mb-8">
+          Choose your language
+        </p>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {languages.map((lang, index) => (
             <motion.button
               key={lang.code}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.03 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => handleSelect(lang.code)}
-              className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+              className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
                 data.language === lang.code
-                  ? 'border-emerald-500 bg-emerald-50'
-                  : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
+                  ? 'bg-white shadow-lg'
+                  : 'bg-white/20 backdrop-blur-sm'
               }`}
             >
-              <span className={`font-medium ${
-                data.language === lang.code ? 'text-emerald-700' : 'text-gray-700'
-              }`}>
-                {lang.name}
-              </span>
+              <div className="flex items-center gap-4">
+                <span className="text-3xl">{lang.flag}</span>
+                <span className={`font-medium ${
+                  data.language === lang.code ? 'text-emerald-600' : 'text-white'
+                }`}>
+                  {lang.name}
+                </span>
+              </div>
               {data.language === lang.code && (
                 <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
                   <Check className="w-4 h-4 text-white" />

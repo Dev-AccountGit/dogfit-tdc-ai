@@ -9,7 +9,6 @@ import { ExperienceStep } from '@/components/onboarding/steps/ExperienceStep';
 import { AIComparisonStep } from '@/components/onboarding/steps/AIComparisonStep';
 import { GoalStep } from '@/components/onboarding/steps/GoalStep';
 import { MotivationsStep } from '@/components/onboarding/steps/MotivationsStep';
-import { SupportStep } from '@/components/onboarding/steps/SupportStep';
 import { ObstaclesStep } from '@/components/onboarding/steps/ObstaclesStep';
 import { GenderStep } from '@/components/onboarding/steps/GenderStep';
 import { BirthdayStep } from '@/components/onboarding/steps/BirthdayStep';
@@ -17,29 +16,25 @@ import { UnitsStep } from '@/components/onboarding/steps/UnitsStep';
 import { HeightStep } from '@/components/onboarding/steps/HeightStep';
 import { CurrentWeightStep } from '@/components/onboarding/steps/CurrentWeightStep';
 import { TargetWeightStep } from '@/components/onboarding/steps/TargetWeightStep';
-import { AITrainerStep } from '@/components/onboarding/steps/AITrainerStep';
 import { ActivityLevelStep } from '@/components/onboarding/steps/ActivityLevelStep';
+import { LifestyleStep } from '@/components/onboarding/steps/LifestyleStep';
 import { ProgressSpeedStep } from '@/components/onboarding/steps/ProgressSpeedStep';
-import { TrackingDaysStep } from '@/components/onboarding/steps/TrackingDaysStep';
-import { HabitStep } from '@/components/onboarding/steps/HabitStep';
+import { CommitmentStep } from '@/components/onboarding/steps/CommitmentStep';
 import { TrackingFrequencyStep } from '@/components/onboarding/steps/TrackingFrequencyStep';
-import { CustomizeStep } from '@/components/onboarding/steps/CustomizeStep';
 import { BadHabitsStep } from '@/components/onboarding/steps/BadHabitsStep';
 import { DietTypeStep } from '@/components/onboarding/steps/DietTypeStep';
-import { HealthyEatingStep } from '@/components/onboarding/steps/HealthyEatingStep';
-import { DietaryRestrictionsStep } from '@/components/onboarding/steps/DietaryRestrictionsStep';
-import { ExpertsStep } from '@/components/onboarding/steps/ExpertsStep';
-import { MealTimingInfoStep } from '@/components/onboarding/steps/MealTimingInfoStep';
-import { MealsPerDayStep } from '@/components/onboarding/steps/MealsPerDayStep';
-import { FastingStep } from '@/components/onboarding/steps/FastingStep';
-import { MealTimesStep } from '@/components/onboarding/steps/MealTimesStep';
 import { EatingOutStep } from '@/components/onboarding/steps/EatingOutStep';
+import { PersonalizedPlanStep } from '@/components/onboarding/steps/PersonalizedPlanStep';
+import { SummaryStep } from '@/components/onboarding/steps/SummaryStep';
 import { NotificationsStep } from '@/components/onboarding/steps/NotificationsStep';
+import { TrainingStep } from '@/components/onboarding/steps/TrainingStep';
+import { FinalStep } from '@/components/onboarding/steps/FinalStep';
 
 const OnboardingSteps = () => {
   const { step } = useOnboarding();
   const navigate = useNavigate();
 
+  // Check if onboarding is already complete
   useEffect(() => {
     const isComplete = localStorage.getItem('onboarding_complete');
     if (isComplete === 'true') {
@@ -52,37 +47,29 @@ const OnboardingSteps = () => {
       case 1: return <WelcomeStep />;
       case 2: return <LanguageStep />;
       case 3: return <ExperienceStep />;
-      case 4:
-      case 5:
-      case 6: return <AIComparisonStep />;
-      case 7: return <GoalStep />;
-      case 8: return <MotivationsStep />;
-      case 9: return <SupportStep />;
-      case 10: return <ObstaclesStep />;
-      case 11: return <GenderStep />;
-      case 12: return <BirthdayStep />;
-      case 13: return <UnitsStep />;
-      case 14: return <HeightStep />;
-      case 15: return <CurrentWeightStep />;
-      case 16: return <TargetWeightStep />;
-      case 17: return <AITrainerStep />;
-      case 18: return <ActivityLevelStep />;
-      case 19: return <ProgressSpeedStep />;
-      case 20: return <TrackingDaysStep />;
-      case 21: return <HabitStep />;
-      case 22: return <TrackingFrequencyStep />;
-      case 23: return <CustomizeStep />;
-      case 24: return <BadHabitsStep />;
-      case 25: return <DietTypeStep />;
-      case 26: return <HealthyEatingStep />;
-      case 27: return <DietaryRestrictionsStep />;
-      case 28: return <ExpertsStep />;
-      case 29: return <MealTimingInfoStep />;
-      case 30: return <MealsPerDayStep />;
-      case 31: return <FastingStep />;
-      case 32: return <MealTimesStep />;
-      case 33: return <EatingOutStep />;
-      case 34: return <NotificationsStep />;
+      case 4: return <AIComparisonStep />;
+      case 5: return <GoalStep />;
+      case 6: return <MotivationsStep />;
+      case 7: return <ObstaclesStep />;
+      case 8: return <GenderStep />;
+      case 9: return <BirthdayStep />;
+      case 10: return <UnitsStep />;
+      case 11: return <HeightStep />;
+      case 12: return <CurrentWeightStep />;
+      case 13: return <TargetWeightStep />;
+      case 14: return <ActivityLevelStep />;
+      case 15: return <LifestyleStep />;
+      case 16: return <ProgressSpeedStep />;
+      case 17: return <CommitmentStep />;
+      case 18: return <TrackingFrequencyStep />;
+      case 19: return <BadHabitsStep />;
+      case 20: return <DietTypeStep />;
+      case 21: return <EatingOutStep />;
+      case 22: return <PersonalizedPlanStep />;
+      case 23: return <SummaryStep />;
+      case 24: return <NotificationsStep />;
+      case 25: return <TrainingStep />;
+      case 26: return <FinalStep />;
       default: return <WelcomeStep />;
     }
   };

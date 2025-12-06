@@ -2,27 +2,23 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface OnboardingData {
   language: string;
-  calorieCountingExperience: string;
+  experienceLevel: string;
   mainGoal: string;
   motivations: string[];
   obstacles: string[];
   gender: string;
-  birthYear: number;
+  birthday: string;
   units: 'metric' | 'imperial';
   height: number;
   currentWeight: number;
   targetWeight: number;
   activityLevel: string;
-  progressSpeed: number;
-  trackingDays: number;
+  lifestyle: string;
+  progressSpeed: string;
+  commitment: string;
   trackingFrequency: string;
   badHabits: string[];
   dietType: string;
-  dietaryRestrictions: string[];
-  mealsPerDay: number;
-  fastingExperience: string;
-  firstMealTime: string;
-  lastMealTime: string;
   eatingOutFrequency: string;
   notificationsEnabled: boolean;
 }
@@ -37,27 +33,23 @@ interface OnboardingContextType {
 
 const defaultData: OnboardingData = {
   language: 'pt',
-  calorieCountingExperience: '',
+  experienceLevel: '',
   mainGoal: '',
   motivations: [],
   obstacles: [],
   gender: '',
-  birthYear: 1995,
+  birthday: '',
   units: 'metric',
   height: 170,
   currentWeight: 70,
   targetWeight: 65,
   activityLevel: '',
-  progressSpeed: 0.5,
-  trackingDays: 30,
+  lifestyle: '',
+  progressSpeed: '',
+  commitment: '',
   trackingFrequency: '',
   badHabits: [],
   dietType: '',
-  dietaryRestrictions: [],
-  mealsPerDay: 3,
-  fastingExperience: '',
-  firstMealTime: '09:00',
-  lastMealTime: '19:00',
   eatingOutFrequency: '',
   notificationsEnabled: false,
 };
@@ -67,7 +59,7 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<OnboardingData>(defaultData);
-  const totalSteps = 36;
+  const totalSteps = 26;
 
   const updateData = (updates: Partial<OnboardingData>) => {
     setData(prev => ({ ...prev, ...updates }));

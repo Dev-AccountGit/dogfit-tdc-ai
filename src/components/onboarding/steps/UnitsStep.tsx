@@ -3,8 +3,18 @@ import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
 const units = [
-  { id: 'metric', label: 'Métrico', description: '(m, kg, ml)' },
-  { id: 'imperial', label: 'Imperial', description: '(ft, lb, fl oz)' },
+  { 
+    id: 'metric', 
+    title: 'Métrico', 
+    description: 'kg, cm',
+    examples: ['70 kg', '170 cm']
+  },
+  { 
+    id: 'imperial', 
+    title: 'Imperial', 
+    description: 'lb, ft/in',
+    examples: ['154 lb', '5\'7"']
+  },
 ];
 
 export const UnitsStep = () => {
@@ -12,58 +22,64 @@ export const UnitsStep = () => {
 
   const handleSelect = (id: 'metric' | 'imperial') => {
     updateData({ units: id });
-    setTimeout(() => setStep(14), 200);
+    setTimeout(() => setStep(11), 300);
   };
 
   return (
-    <OnboardingLayout category="Dados Corporais">
-      <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Quais são suas unidades?
-        </h1>
-        <p className="text-gray-500 mb-8">
-          O sistema de medição que você selecionar será aplicado a todas as medições no aplicativo
+    <OnboardingLayout>
+      <div className="flex-1 flex flex-col px-6 pt-8">
+        <h2 className="text-2xl font-bold text-white text-center mb-2">
+          Sistema de medidas
+        </h2>
+        <p className="text-white/70 text-center mb-8">
+          Escolha como prefere ver seus dados
         </p>
 
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="space-y-3">
-            {units.map((unit, index) => (
-              <motion.button
-                key={unit.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleSelect(unit.id as 'metric' | 'imperial')}
-                className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all ${
-                  data.units === unit.id
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className={`font-semibold text-lg ${
-                    data.units === unit.id ? 'text-emerald-700' : 'text-gray-700'
+        <div className="space-y-4">
+          {units.map((unit, index) => (
+            <motion.button
+              key={unit.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleSelect(unit.id as 'metric' | 'imperial')}
+              className={`w-full p-5 rounded-2xl transition-all ${
+                data.units === unit.id
+                  ? 'bg-white shadow-lg'
+                  : 'bg-white/20 backdrop-blur-sm'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <p className={`font-semibold text-lg ${
+                    data.units === unit.id ? 'text-emerald-600' : 'text-white'
                   }`}>
-                    {unit.label}
-                  </span>
-                  <span className={`text-sm ${
-                    data.units === unit.id ? 'text-emerald-500' : 'text-gray-400'
+                    {unit.title}
+                  </p>
+                  <p className={`text-sm ${
+                    data.units === unit.id ? 'text-gray-500' : 'text-white/70'
                   }`}>
                     {unit.description}
-                  </span>
+                  </p>
                 </div>
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                  data.units === unit.id 
-                    ? 'border-emerald-500 bg-emerald-500' 
-                    : 'border-gray-300'
-                }`}>
-                  {data.units === unit.id && (
-                    <div className="w-2 h-2 bg-white rounded-full" />
-                  )}
+                <div className="flex gap-2">
+                  {unit.examples.map((ex, i) => (
+                    <span 
+                      key={i}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        data.units === unit.id 
+                          ? 'bg-emerald-100 text-emerald-600' 
+                          : 'bg-white/20 text-white'
+                      }`}
+                    >
+                      {ex}
+                    </span>
+                  ))}
                 </div>
-              </motion.button>
-            ))}
-          </div>
+              </div>
+            </motion.button>
+          ))}
         </div>
       </div>
     </OnboardingLayout>

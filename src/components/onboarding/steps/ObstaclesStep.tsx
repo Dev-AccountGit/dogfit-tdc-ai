@@ -1,16 +1,15 @@
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Clock, Utensils, Dumbbell, Moon, Candy, Users } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
 const obstacles = [
-  { id: 'cravings', label: 'Desejos alimentares', emoji: '🍫' },
-  { id: 'anxiety', label: 'Ansiedade com uma dieta limitada', emoji: '😰' },
-  { id: 'night', label: 'Lanchinhos à noite', emoji: '🌙' },
-  { id: 'schedule', label: 'Agenda cheia', emoji: '📅' },
-  { id: 'other', label: 'Algo mais', emoji: '🤷' },
-  { id: 'unhealthy', label: 'Hábitos alimentares não saudáveis', emoji: '🍔' },
-  { id: 'support', label: 'Falta de apoio', emoji: '💔' },
+  { id: 'time', label: 'Falta de tempo', icon: Clock },
+  { id: 'cooking', label: 'Não sei cozinhar', icon: Utensils },
+  { id: 'exercise', label: 'Não gosto de exercícios', icon: Dumbbell },
+  { id: 'sleep', label: 'Problemas de sono', icon: Moon },
+  { id: 'cravings', label: 'Vontade de doces', icon: Candy },
+  { id: 'social', label: 'Eventos sociais', icon: Users },
 ];
 
 export const ObstaclesStep = () => {
@@ -27,58 +26,62 @@ export const ObstaclesStep = () => {
   const canContinue = (data.obstacles?.length || 0) > 0;
 
   return (
-    <OnboardingLayout category="Meta & Foco">
-      <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          O que está te impedindo de atingir seus objetivos?
-        </h1>
+    <OnboardingLayout>
+      <div className="flex-1 flex flex-col px-6 pt-8">
+        <h2 className="text-2xl font-bold text-white text-center mb-2">
+          Quais são seus obstáculos?
+        </h2>
+        <p className="text-white/70 text-center mb-8">
+          Vamos te ajudar a superar
+        </p>
 
-        <div className="space-y-2 flex-1">
+        <div className="grid grid-cols-2 gap-3 mb-8">
           {obstacles.map((item, index) => {
+            const Icon = item.icon;
             const isSelected = data.obstacles?.includes(item.id);
             return (
               <motion.button
                 key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.03 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => toggleObstacle(item.id)}
-                className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+                className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
                   isSelected
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-gray-100 bg-gray-50'
+                    ? 'bg-white shadow-lg'
+                    : 'bg-white/20 backdrop-blur-sm'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{item.emoji}</span>
-                  <span className={`font-medium ${isSelected ? 'text-emerald-700' : 'text-gray-700'}`}>
-                    {item.label}
-                  </span>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  isSelected ? 'bg-orange-500' : 'bg-white/20'
+                }`}>
+                  <Icon className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-white'}`} />
                 </div>
-                {isSelected && (
-                  <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                )}
+                <span className={`text-sm font-medium text-center ${
+                  isSelected ? 'text-orange-600' : 'text-white'
+                }`}>
+                  {item.label}
+                </span>
               </motion.button>
             );
           })}
         </div>
-      </div>
 
-      <div className="px-6 pb-8 pt-4 safe-area-bottom">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setStep(11)}
-          disabled={!canContinue}
-          className={`w-full font-semibold py-4 rounded-full transition-all ${
-            canContinue
-              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-              : 'bg-gray-200 text-gray-400'
-          }`}
-        >
-          Próximo
-        </motion.button>
+        <div className="mt-auto pb-8">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setStep(8)}
+            disabled={!canContinue}
+            className={`w-full font-semibold py-4 rounded-2xl shadow-lg transition-all ${
+              canContinue
+                ? 'bg-white text-emerald-600'
+                : 'bg-white/30 text-white/50'
+            }`}
+          >
+            Continuar
+          </motion.button>
+        </div>
       </div>
     </OnboardingLayout>
   );

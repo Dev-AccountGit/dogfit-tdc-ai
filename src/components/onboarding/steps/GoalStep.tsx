@@ -1,12 +1,37 @@
 import { motion } from 'framer-motion';
-import { TrendingDown, Scale, TrendingUp } from 'lucide-react';
+import { TrendingDown, Scale, TrendingUp, Dumbbell } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
 const goals = [
-  { id: 'lose', label: 'Perder Peso', icon: TrendingDown, color: 'text-rose-500' },
-  { id: 'maintain', label: 'Manter o Peso Atual', icon: Scale, color: 'text-blue-500' },
-  { id: 'gain', label: 'Ganhar Peso', icon: TrendingUp, color: 'text-green-500' },
+  { 
+    id: 'lose', 
+    title: 'Perder peso', 
+    description: 'Emagrecer de forma saudável',
+    icon: TrendingDown,
+    color: 'from-rose-500 to-pink-500'
+  },
+  { 
+    id: 'maintain', 
+    title: 'Manter peso', 
+    description: 'Continuar no peso atual',
+    icon: Scale,
+    color: 'from-blue-500 to-cyan-500'
+  },
+  { 
+    id: 'gain', 
+    title: 'Ganhar peso', 
+    description: 'Aumentar massa de forma saudável',
+    icon: TrendingUp,
+    color: 'from-green-500 to-emerald-500'
+  },
+  { 
+    id: 'muscle', 
+    title: 'Ganhar músculos', 
+    description: 'Foco em hipertrofia',
+    icon: Dumbbell,
+    color: 'from-purple-500 to-violet-500'
+  },
 ];
 
 export const GoalStep = () => {
@@ -14,45 +39,54 @@ export const GoalStep = () => {
 
   const handleSelect = (id: string) => {
     updateData({ mainGoal: id });
-    setTimeout(() => setStep(8), 200);
+    setTimeout(() => setStep(6), 300);
   };
 
   return (
-    <OnboardingLayout category="Meta & Foco">
-      <div className="flex-1 flex flex-col px-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Qual meta você planeja alcançar?
-        </h1>
+    <OnboardingLayout>
+      <div className="flex-1 flex flex-col px-6 pt-8">
+        <h2 className="text-2xl font-bold text-white text-center mb-2">
+          Qual é seu objetivo?
+        </h2>
+        <p className="text-white/70 text-center mb-8">
+          Vamos criar um plano personalizado para você
+        </p>
 
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="space-y-3">
-            {goals.map((goal, index) => {
-              const Icon = goal.icon;
-              return (
-                <motion.button
-                  key={goal.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => handleSelect(goal.id)}
-                  className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all ${
-                    data.mainGoal === goal.id
-                      ? 'border-emerald-500 bg-emerald-50'
-                      : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className={`w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center ${goal.color}`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span className={`font-medium text-lg ${
-                    data.mainGoal === goal.id ? 'text-emerald-700' : 'text-gray-700'
+        <div className="space-y-3">
+          {goals.map((goal, index) => {
+            const Icon = goal.icon;
+            return (
+              <motion.button
+                key={goal.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSelect(goal.id)}
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${
+                  data.mainGoal === goal.id
+                    ? 'bg-white shadow-lg'
+                    : 'bg-white/20 backdrop-blur-sm'
+                }`}
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${goal.color} flex items-center justify-center`}>
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left flex-1">
+                  <p className={`font-semibold ${
+                    data.mainGoal === goal.id ? 'text-emerald-600' : 'text-white'
                   }`}>
-                    {goal.label}
-                  </span>
-                </motion.button>
-              );
-            })}
-          </div>
+                    {goal.title}
+                  </p>
+                  <p className={`text-sm ${
+                    data.mainGoal === goal.id ? 'text-gray-500' : 'text-white/70'
+                  }`}>
+                    {goal.description}
+                  </p>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
     </OnboardingLayout>
