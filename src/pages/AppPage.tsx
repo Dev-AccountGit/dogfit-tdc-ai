@@ -67,27 +67,20 @@ const AppPage = () => {
         </AnimatePresence>
       </main>
 
-      {/* Bottom Navigation - iOS Style */}
+      {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50">
-        {/* Glass Effect Background */}
-        <div className="relative bg-background/70 backdrop-blur-2xl border-t border-border/30 shadow-[0_-2px_20px_rgba(0,0,0,0.05)]">
-          <div className="flex items-end justify-around px-2 pt-2 pb-8">
+        <div className="bg-background/95 backdrop-blur-xl border-t border-border/40">
+          <div className="flex items-center justify-around px-4 py-3">
             {/* Home */}
             <button
               onClick={() => setActiveTab("home")}
-              className="flex flex-col items-center gap-1 min-w-[56px] py-1 transition-all duration-200 active:scale-95"
+              className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors"
             >
-              <div className={`p-1 rounded-xl transition-all duration-200 ${activeTab === "home" ? "bg-primary/10" : ""}`}>
-                <Home 
-                  className={`w-6 h-6 transition-all duration-200 ${
-                    activeTab === "home" ? "text-primary" : "text-muted-foreground"
-                  }`} 
-                  strokeWidth={activeTab === "home" ? 2.5 : 1.5}
-                />
-              </div>
-              <span className={`text-[10px] tracking-tight transition-all duration-200 ${
-                activeTab === "home" ? "text-primary font-semibold" : "text-muted-foreground font-medium"
-              }`}>
+              <Home 
+                className={`w-6 h-6 ${activeTab === "home" ? "text-primary" : "text-muted-foreground"}`} 
+                strokeWidth={activeTab === "home" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "home" ? "text-primary font-medium" : "text-muted-foreground"}`}>
                 Home
               </span>
             </button>
@@ -95,76 +88,47 @@ const AppPage = () => {
             {/* Agenda */}
             <button
               onClick={() => setActiveTab("search")}
-              className="flex flex-col items-center gap-1 min-w-[56px] py-1 transition-all duration-200 active:scale-95"
+              className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors"
             >
-              <div className={`p-1 rounded-xl transition-all duration-200 ${activeTab === "search" ? "bg-primary/10" : ""}`}>
-                <Calendar 
-                  className={`w-6 h-6 transition-all duration-200 ${
-                    activeTab === "search" ? "text-primary" : "text-muted-foreground"
-                  }`}
-                  strokeWidth={activeTab === "search" ? 2.5 : 1.5}
-                />
-              </div>
-              <span className={`text-[10px] tracking-tight transition-all duration-200 ${
-                activeTab === "search" ? "text-primary font-semibold" : "text-muted-foreground font-medium"
-              }`}>
+              <Calendar 
+                className={`w-6 h-6 ${activeTab === "search" ? "text-primary" : "text-muted-foreground"}`}
+                strokeWidth={activeTab === "search" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "search" ? "text-primary font-medium" : "text-muted-foreground"}`}>
                 Agenda
               </span>
             </button>
 
-            {/* Central Floating Button */}
-            <div className="flex flex-col items-center -mt-6">
-              <motion.button
-                whileTap={{ scale: 0.92 }}
-                onClick={() => setActiveTab("camera")}
-                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                  activeTab === "camera" 
-                    ? "bg-primary text-primary-foreground shadow-[0_4px_20px_rgba(var(--primary),0.4)]" 
-                    : "bg-primary text-primary-foreground shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
-                }`}
-                style={{
-                  boxShadow: activeTab === "camera" 
-                    ? "0 4px 20px hsl(var(--primary) / 0.4)" 
-                    : "0 4px 16px rgba(0,0,0,0.12)"
-                }}
-              >
-                <Plus className="w-7 h-7" strokeWidth={2.5} />
-              </motion.button>
-            </div>
+            {/* Central Button */}
+            <button
+              onClick={() => setActiveTab("camera")}
+              className="w-12 h-12 -mt-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg"
+            >
+              <Plus className="w-6 h-6" strokeWidth={2.5} />
+            </button>
 
             {/* Histórico */}
             <button
               onClick={() => setActiveTab("profile")}
-              className="flex flex-col items-center gap-1 min-w-[56px] py-1 transition-all duration-200 active:scale-95"
+              className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors"
             >
-              <div className={`p-1 rounded-xl transition-all duration-200 ${activeTab === "profile" ? "bg-primary/10" : ""}`}>
-                <History 
-                  className={`w-6 h-6 transition-all duration-200 ${
-                    activeTab === "profile" ? "text-primary" : "text-muted-foreground"
-                  }`}
-                  strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
-                />
-              </div>
-              <span className={`text-[10px] tracking-tight transition-all duration-200 ${
-                activeTab === "profile" ? "text-primary font-semibold" : "text-muted-foreground font-medium"
-              }`}>
+              <History 
+                className={`w-6 h-6 ${activeTab === "profile" ? "text-primary" : "text-muted-foreground"}`}
+                strokeWidth={activeTab === "profile" ? 2.5 : 1.5}
+              />
+              <span className={`text-[10px] ${activeTab === "profile" ? "text-primary font-medium" : "text-muted-foreground"}`}>
                 Histórico
               </span>
             </button>
 
             {/* Mais */}
-            <button
-              className="flex flex-col items-center gap-1 min-w-[56px] py-1 transition-all duration-200 active:scale-95"
-            >
-              <div className="p-1 rounded-xl">
-                <MoreHorizontal className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
-              </div>
-              <span className="text-[10px] tracking-tight text-muted-foreground font-medium">
+            <button className="flex flex-col items-center gap-0.5 min-w-[48px] transition-colors">
+              <MoreHorizontal className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
+              <span className="text-[10px] text-muted-foreground">
                 Mais
               </span>
             </button>
           </div>
-
         </div>
       </nav>
     </div>
