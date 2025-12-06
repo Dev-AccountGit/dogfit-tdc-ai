@@ -1,101 +1,105 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Search, Sparkles, Clock, Zap, Brain } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
+const comparisons = [
+  {
+    title: 'Digitalização direta e simples de alimentos, não apenas escaneamento de códigos de barras!',
+    traditional: 'Disponível apenas para alimentos com código de barras',
+    ai: 'Basta tirar uma foto do alimento para obter detalhes',
+    icon: '📸'
+  },
+  {
+    title: 'Dê adeus à entrada manual, o reconhecimento por IA é mais rápido',
+    traditional: 'Registrar manualmente',
+    ai: 'Uma simples digitalização revela instantaneamente suas porções de comida',
+    icon: '⚡'
+  },
+  {
+    title: 'Não consegue encontrar sua refeição? O Contador AI identifica cada refeição',
+    traditional: 'Apenas um número limitado de grupos de alimentos pode ser reconhecido',
+    ai: 'Identifica com precisão todos os componentes alimentares',
+    icon: '🔍'
+  },
+];
+
 export const AIComparisonStep = () => {
-  const { setStep } = useOnboarding();
+  const { setStep, step } = useOnboarding();
+  const [currentComparison, setCurrentComparison] = useState(0);
+
+  const handleNext = () => {
+    if (currentComparison < comparisons.length - 1) {
+      setCurrentComparison(prev => prev + 1);
+    } else {
+      setStep(step + 1);
+    }
+  };
+
+  const comparison = comparisons[currentComparison];
 
   return (
     <OnboardingLayout>
-      <div className="flex-1 flex flex-col px-6 pt-4">
-        <h2 className="text-2xl font-bold text-white text-center mb-6">
-          Por que usar IA?
-        </h2>
+      <div className="flex-1 flex flex-col px-6">
+        <motion.h1
+          key={currentComparison}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-xl font-bold text-gray-900 mb-8 leading-tight"
+        >
+          {comparison.title}
+        </motion.h1>
 
         <div className="grid grid-cols-2 gap-4 mb-8">
-          {/* Tradicional */}
+          {/* Traditional */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white/10 backdrop-blur-sm rounded-2xl p-4"
+            className="bg-gray-100 rounded-2xl p-4"
           >
-            <div className="flex items-center gap-2 mb-3">
-              <Search className="w-5 h-5 text-white/60" />
-              <span className="text-white/60 text-sm font-medium">Tradicional</span>
+            <p className="text-xs text-gray-500 mb-2 font-medium">Contador Tradicional</p>
+            <div className="h-32 bg-gray-200 rounded-xl mb-3 flex items-center justify-center">
+              <span className="text-4xl opacity-50">📋</span>
             </div>
-            <ul className="space-y-2 text-white/60 text-xs">
-              <li className="flex items-center gap-2">
-                <Clock className="w-3 h-3" />
-                <span>Busca manual lenta</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-3 h-3 flex items-center justify-center">📝</span>
-                <span>Digitar tudo</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-3 h-3 flex items-center justify-center">❌</span>
-                <span>Estimativas imprecisas</span>
-              </li>
-            </ul>
+            <p className="text-sm text-gray-600">{comparison.traditional}</p>
           </motion.div>
 
-          {/* Com IA */}
+          {/* AI */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-2xl p-4 shadow-xl"
+            className="bg-emerald-50 rounded-2xl p-4 border-2 border-emerald-200"
           >
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-5 h-5 text-emerald-500" />
-              <span className="text-emerald-600 text-sm font-medium">Com IA</span>
+            <p className="text-xs text-emerald-600 mb-2 font-medium">Contador de Calorias por IA</p>
+            <div className="h-32 bg-emerald-100 rounded-xl mb-3 flex items-center justify-center">
+              <span className="text-4xl">{comparison.icon}</span>
             </div>
-            <ul className="space-y-2 text-gray-600 text-xs">
-              <li className="flex items-center gap-2">
-                <Camera className="w-3 h-3 text-emerald-500" />
-                <span>Foto instantânea</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Zap className="w-3 h-3 text-emerald-500" />
-                <span>Reconhecimento automático</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Brain className="w-3 h-3 text-emerald-500" />
-                <span>Precisão inteligente</span>
-              </li>
-            </ul>
+            <p className="text-sm text-emerald-700">{comparison.ai}</p>
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-4 mb-6"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-white font-semibold">80% mais rápido</p>
-              <p className="text-white/80 text-sm">que métodos tradicionais</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <div className="mt-auto pb-8">
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setStep(5)}
-            className="w-full bg-white text-emerald-600 font-semibold py-4 rounded-2xl shadow-lg"
-          >
-            Continuar
-          </motion.button>
+        {/* Dots indicator */}
+        <div className="flex justify-center gap-2 mb-8">
+          {comparisons.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2 h-2 rounded-full transition-all ${
+                idx === currentComparison ? 'bg-emerald-500 w-6' : 'bg-gray-300'
+              }`}
+            />
+          ))}
         </div>
+      </div>
+
+      {/* CTA Button */}
+      <div className="px-6 pb-8 safe-area-bottom">
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={handleNext}
+          className="w-full bg-emerald-500 text-white font-semibold py-4 rounded-full shadow-lg shadow-emerald-500/30"
+        >
+          Próximo
+        </motion.button>
       </div>
     </OnboardingLayout>
   );

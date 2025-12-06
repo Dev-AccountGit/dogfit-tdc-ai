@@ -1,39 +1,12 @@
 import { motion } from 'framer-motion';
-import { Sofa, Footprints, Bike, Dumbbell, Flame } from 'lucide-react';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
 
 const levels = [
-  { 
-    id: 'sedentary', 
-    title: 'Sedentário', 
-    description: 'Pouco ou nenhum exercício',
-    icon: Sofa 
-  },
-  { 
-    id: 'light', 
-    title: 'Levemente ativo', 
-    description: 'Exercício leve 1-3x/semana',
-    icon: Footprints 
-  },
-  { 
-    id: 'moderate', 
-    title: 'Moderadamente ativo', 
-    description: 'Exercício moderado 3-5x/semana',
-    icon: Bike 
-  },
-  { 
-    id: 'active', 
-    title: 'Muito ativo', 
-    description: 'Exercício intenso 6-7x/semana',
-    icon: Dumbbell 
-  },
-  { 
-    id: 'extreme', 
-    title: 'Extremamente ativo', 
-    description: 'Atleta ou trabalho físico pesado',
-    icon: Flame 
-  },
+  { id: 'sedentary', label: 'Sedentário', description: 'Passo a maior parte do dia sentado', emoji: '🪑' },
+  { id: 'light', label: 'Pouco ativo', description: 'Trabalho em pé, movendo-se ao longo do dia', emoji: '🚶' },
+  { id: 'active', label: 'Ativo', description: 'Minha rotina diária inclui exercícios', emoji: '🏃' },
+  { id: 'very_active', label: 'Muito ativo', description: 'Fisicamente ativo na maior parte do dia', emoji: '💪' },
 ];
 
 export const ActivityLevelStep = () => {
@@ -41,58 +14,48 @@ export const ActivityLevelStep = () => {
 
   const handleSelect = (id: string) => {
     updateData({ activityLevel: id });
-    setTimeout(() => setStep(15), 300);
+    setTimeout(() => setStep(19), 200);
   };
 
   return (
-    <OnboardingLayout>
-      <div className="flex-1 flex flex-col px-6 pt-6">
-        <h2 className="text-2xl font-bold text-white text-center mb-2">
-          Nível de atividade
-        </h2>
-        <p className="text-white/70 text-center mb-6">
-          Qual seu nível de atividade física?
+    <OnboardingLayout category="Estilo De Vida">
+      <div className="flex-1 flex flex-col px-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Como é o seu estilo de vida?
+        </h1>
+        <p className="text-gray-500 mb-6">
+          Sem contar os exercícios - perguntaremos sobre eles separadamente
         </p>
 
-        <div className="space-y-2 overflow-y-auto flex-1">
-          {levels.map((level, index) => {
-            const Icon = level.icon;
-            return (
-              <motion.button
-                key={level.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleSelect(level.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
-                  data.activityLevel === level.id
-                    ? 'bg-white shadow-lg'
-                    : 'bg-white/20 backdrop-blur-sm'
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  data.activityLevel === level.id ? 'bg-emerald-500' : 'bg-white/20'
+        <div className="space-y-3">
+          {levels.map((level, index) => (
+            <motion.button
+              key={level.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => handleSelect(level.id)}
+              className={`w-full flex items-start gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
+                data.activityLevel === level.id
+                  ? 'border-emerald-500 bg-emerald-50'
+                  : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
+              }`}
+            >
+              <span className="text-2xl mt-1">{level.emoji}</span>
+              <div>
+                <p className={`font-semibold ${
+                  data.activityLevel === level.id ? 'text-emerald-700' : 'text-gray-700'
                 }`}>
-                  <Icon className={`w-5 h-5 ${
-                    data.activityLevel === level.id ? 'text-white' : 'text-white'
-                  }`} />
-                </div>
-                <div className="text-left flex-1">
-                  <p className={`font-semibold text-sm ${
-                    data.activityLevel === level.id ? 'text-emerald-600' : 'text-white'
-                  }`}>
-                    {level.title}
-                  </p>
-                  <p className={`text-xs ${
-                    data.activityLevel === level.id ? 'text-gray-500' : 'text-white/70'
-                  }`}>
-                    {level.description}
-                  </p>
-                </div>
-              </motion.button>
-            );
-          })}
+                  {level.label}
+                </p>
+                <p className={`text-sm ${
+                  data.activityLevel === level.id ? 'text-emerald-600' : 'text-gray-500'
+                }`}>
+                  {level.description}
+                </p>
+              </div>
+            </motion.button>
+          ))}
         </div>
       </div>
     </OnboardingLayout>
