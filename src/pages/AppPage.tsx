@@ -8,6 +8,8 @@ import AppCamera from "@/components/app/AppCamera";
 import AppSearch from "@/components/app/AppSearch";
 import AppMore from "@/components/app/AppMore";
 import AppHistory from "@/components/app/AppHistory";
+import MaintenanceCheck from "@/components/app/MaintenanceCheck";
+import UpdateChecker from "@/components/app/UpdateChecker";
 
 const AppPage = () => {
   const { user, loading } = useAuth();
