@@ -8,7 +8,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile, type Profile } from "@/services/appService";
-import { ADMIN_EMAIL } from "@/services/adminService";
+import { checkIsAdmin } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.png";
 import AdminPanel from "./admin/AdminPanel";
@@ -22,6 +22,7 @@ const AppMore = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   // Goals editing
   const [editingGoals, setEditingGoals] = useState(false);
@@ -36,8 +37,19 @@ const AppMore = () => {
   useEffect(() => {
     if (user) {
       loadProfile();
+      loadAdminStatus();
     }
   }, [user]);
+
+  const loadAdminStatus = async () => {
+    if (!user) return;
+    try {
+      const adminStatus = await checkIsAdmin(user.id);
+      setIsAdmin(adminStatus);
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+    }
+  };
 
   const loadProfile = async () => {
     if (!user) return;
@@ -327,8 +339,6 @@ const AppMore = () => {
     );
   }
 
-  // Check if current user is admin
-  const isAdminUser = user?.email === ADMIN_EMAIL;
 
   const menuItems = [
     { icon: User, label: "Perfil", section: "profile", color: "text-blue-500" },
@@ -373,7 +383,7 @@ const AppMore = () => {
       </motion.div>
 
       {/* Admin Panel Button */}
-      {isAdminUser && (
+      {isAdmin && (
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
