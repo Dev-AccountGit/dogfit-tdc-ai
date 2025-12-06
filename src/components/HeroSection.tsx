@@ -49,7 +49,7 @@ const HeroSection = () => {
               transition={{ delay: 0.3 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
             >
-              Meet Cal AI
+              Meet DogFitTdc Ai
               <br />
               <span className="text-foreground/90">Track your calories</span>
               <br />
@@ -62,7 +62,7 @@ const HeroSection = () => {
               transition={{ delay: 0.4 }}
               className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-8"
             >
-              Meet Cal AI, the AI-powered app for easy calorie tracking. Snap a photo, scan a
+              Meet DogFitTdc Ai, the AI-powered app for easy calorie tracking. Snap a photo, scan a
               barcode, or describe your meal and get instant calorie and nutrient info.
             </motion.p>
 

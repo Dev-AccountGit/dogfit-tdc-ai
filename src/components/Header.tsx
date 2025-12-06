@@ -11,8 +11,8 @@ const Header = () => {
     >
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
-          <Apple className="w-6 h-6" />
-          <span className="font-bold text-xl">Cal AI</span>
+          <span className="text-2xl">🐕</span>
+          <span className="font-bold text-xl">DogFitTdc Ai</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-8">

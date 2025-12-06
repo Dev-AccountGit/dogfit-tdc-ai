@@ -13,8 +13,8 @@ const CTASection = () => {
             viewport={{ once: true }}
           >
             <div className="flex items-center gap-2 mb-6">
-              <Apple className="w-8 h-8" />
-              <span className="font-bold text-2xl">Cal AI</span>
+              <span className="text-3xl">🐕</span>
+              <span className="font-bold text-2xl">DogFitTdc Ai</span>
             </div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">

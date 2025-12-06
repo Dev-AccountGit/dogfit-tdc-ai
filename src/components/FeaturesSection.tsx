@@ -5,7 +5,7 @@ const features = [
   {
     icon: Camera,
     title: "Track Your Food With Just a Picture",
-    description: "Snap a photo with Cal AI, and your phone's depth sensor calculates food volume. Our AI then analyzes and breaks down your meal to determine calories, protein, carbs, and fat.",
+    description: "Snap a photo with DogFitTdc Ai, and your phone's depth sensor calculates food volume. Our AI then analyzes and breaks down your meal to determine calories, protein, carbs, and fat.",
     image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
   },
   {
@@ -23,7 +23,7 @@ const features = [
   {
     icon: Droplets,
     title: "Keep track of your water and daily exercise",
-    description: "Log your water intake and daily exercise effortlessly. Cal AI helps you stay hydrated and active, integrating seamlessly with your fitness routine.",
+    description: "Log your water intake and daily exercise effortlessly. DogFitTdc Ai helps you stay hydrated and active, integrating seamlessly with your fitness routine.",
     image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop",
   },
 ];
@@ -38,7 +38,7 @@ const FeaturesSection = () => {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-16"
         >
-          What does Cal AI include?
+          What does DogFitTdc Ai include?
         </motion.h2>
 
         <div className="space-y-24">
