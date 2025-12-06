@@ -8,7 +8,7 @@ import {
   Key,
   Settings,
   Download,
-  Upload,
+  AlertTriangle,
   ChevronRight,
   X,
   RefreshCw,
@@ -21,6 +21,8 @@ import AdminSubscriptionsSection from "./AdminSubscriptionsSection";
 import AdminDatabaseSection from "./AdminDatabaseSection";
 import AdminApiKeysSection from "./AdminApiKeysSection";
 import AdminSettingsSection from "./AdminSettingsSection";
+import AdminMaintenanceSection from "./AdminMaintenanceSection";
+import AdminUpdateSection from "./AdminUpdateSection";
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -120,6 +122,8 @@ const AdminPanel = ({ onClose }: AdminPanelProps) => {
       database: <AdminDatabaseSection onBack={() => setActiveSection(null)} stats={dbStats} />,
       apikeys: <AdminApiKeysSection onBack={() => setActiveSection(null)} />,
       settings: <AdminSettingsSection onBack={() => setActiveSection(null)} />,
+      maintenance: <AdminMaintenanceSection onBack={() => setActiveSection(null)} />,
+      updates: <AdminUpdateSection onBack={() => setActiveSection(null)} />,
     };
 
     return (
@@ -139,6 +143,8 @@ const AdminPanel = ({ onClose }: AdminPanelProps) => {
     { icon: Database, label: "Banco de Dados", section: "database", count: null },
     { icon: Key, label: "API Keys de IA", section: "apikeys", count: null },
     { icon: Settings, label: "Configurações do App", section: "settings", count: null },
+    { icon: AlertTriangle, label: "Modo Manutenção", section: "maintenance", count: null },
+    { icon: Download, label: "Atualizações do App", section: "updates", count: null },
   ];
 
   return (
