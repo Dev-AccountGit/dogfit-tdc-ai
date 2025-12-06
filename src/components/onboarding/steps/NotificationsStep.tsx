@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Bell, BellRing, Sparkles } from 'lucide-react';
+import { Bell, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../OnboardingContext';
 import { OnboardingLayout } from '../OnboardingLayout';
@@ -61,7 +61,7 @@ export const NotificationsStep = () => {
       localStorage.setItem('onboarding_complete', 'true');
       localStorage.setItem('onboarding_data', JSON.stringify(data));
       
-      toast.success('Tudo pronto! Vamos começar 🎉');
+      toast.success('Configuração concluída!');
       navigate('/app');
     } catch (error) {
       console.error('Error saving onboarding data:', error);
@@ -74,72 +74,64 @@ export const NotificationsStep = () => {
   return (
     <OnboardingLayout showProgress={false} showBack={false}>
       <div className="flex-1 flex flex-col">
-        {/* Notification preview */}
-        <div className="bg-gradient-to-b from-muted/50 to-white px-6 pt-10 pb-16">
+        {/* App notification preview */}
+        <div className="px-6 pt-8 pb-12">
           <motion.div
-            initial={{ y: -30, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className="bg-white rounded-3xl shadow-2xl shadow-black/10 p-5 max-w-[320px] mx-auto border border-border/50"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 max-w-xs mx-auto border border-border/50 shadow-xl"
           >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center">
-                <span className="text-2xl">🍎</span>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                <span className="text-lg">🍎</span>
               </div>
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">AI Calorie Counter</p>
-                <p className="text-[15px] font-semibold text-foreground">Hora de registrar sua refeição!</p>
+              <div>
+                <p className="text-xs text-muted-foreground">AI CALORIE COUNTER</p>
+                <p className="text-sm font-medium text-foreground">Hora de registrar sua refeição!</p>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Cada refeição registrada te aproxima do seu objetivo. Vamos continuar? 💪
+            <p className="text-xs text-muted-foreground">
+              Tire um momento para registrar o que você comeu - cada refeição te aproxima da sua meta.
             </p>
           </motion.div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 -mt-8">
+        <div className="flex-1 flex flex-col items-center justify-center px-6">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', delay: 0.2 }}
+            transition={{ type: 'spring' }}
             className="relative w-20 h-20 mb-6"
           >
-            <div className="w-full h-full bg-primary/10 rounded-full flex items-center justify-center">
-              <BellRing className="w-10 h-10 text-primary" />
+            <div className="w-full h-full bg-primary/20 rounded-full flex items-center justify-center">
+              <Bell className="w-10 h-10 text-primary" />
             </div>
             <motion.div
-              animate={{ 
-                scale: [1, 1.2, 1],
-                rotate: [0, 10, -10, 0]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                repeatDelay: 3
-              }}
-              className="absolute -top-1 -right-1 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="absolute -top-1 -right-1 w-8 h-8 bg-[hsl(var(--ios-orange))]/20 rounded-full flex items-center justify-center"
             >
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <Sparkles className="w-4 h-4 text-[hsl(var(--ios-orange))]" />
             </motion.div>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-[26px] font-bold text-foreground text-center mb-3 tracking-tight"
+            className="text-2xl font-bold text-foreground text-center mb-4"
           >
-            Alcance sua meta mais rápido
+            Alcance seu objetivo mais rápido
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-muted-foreground text-center max-w-[280px] text-[15px] leading-relaxed"
+            transition={{ delay: 0.1 }}
+            className="text-muted-foreground text-center max-w-xs"
           >
-            Ative as notificações para nunca esquecer de registrar suas refeições e criar hábitos saudáveis.
+            Ative as notificações para nunca esquecer de acompanhar suas calorias.
           </motion.p>
         </div>
       </div>
@@ -148,25 +140,24 @@ export const NotificationsStep = () => {
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.2 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleComplete(true)}
           disabled={loading}
-          className="w-full bg-primary text-primary-foreground font-semibold py-4 rounded-2xl shadow-lg shadow-primary/30 text-[17px] flex items-center justify-center gap-2"
+          className="w-full bg-primary text-primary-foreground font-semibold py-4 rounded-2xl shadow-lg shadow-primary/30"
         >
-          <Bell className="w-5 h-5" />
-          {loading ? 'Finalizando...' : 'Ativar Notificações'}
+          {loading ? 'Salvando...' : 'Permitir Notificações'}
         </motion.button>
 
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.3 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleComplete(false)}
           disabled={loading}
-          className="w-full text-muted-foreground font-medium py-3 text-[15px]"
+          className="w-full text-muted-foreground font-medium py-3"
         >
           Agora não
         </motion.button>
