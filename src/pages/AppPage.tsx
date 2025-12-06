@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Calendar, Search, User, Plus, History, MoreHorizontal } from "lucide-react";
+import { Home, Calendar, Search, Plus, History, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import AppDashboard from "@/components/app/AppDashboard";
 import AppCamera from "@/components/app/AppCamera";
 import AppSearch from "@/components/app/AppSearch";
-import AppProfile from "@/components/app/AppProfile";
 import AppMore from "@/components/app/AppMore";
 import AppHistory from "@/components/app/AppHistory";
 
@@ -54,7 +53,7 @@ const AppPage = () => {
       case "search":
         return <AppSearch />;
       case "profile":
-        return <AppProfile />;
+        return <AppMore />;
       case "mais":
         return <AppHistory />;
       default:
