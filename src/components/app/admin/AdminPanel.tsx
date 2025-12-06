@@ -35,30 +35,41 @@ const AdminPanel = ({ onClose }: AdminPanelProps) => {
   const [dbStats, setDbStats] = useState<any>(null);
 
   useEffect(() => {
-    checkAdminStatus();
-    loadStats();
+    if (user) {
+      checkAdminStatus();
+      loadStats();
+    } else {
+      setLoading(false);
+    }
   }, [user]);
 
   const checkAdminStatus = async () => {
     if (!user) {
       setLoading(false);
+      setIsAdmin(false);
       return;
     }
 
-    // Check if user email matches admin email
-    if (user.email === ADMIN_EMAIL) {
+    try {
+      // Check if user email matches admin email first (fastest check)
+      if (user.email === ADMIN_EMAIL) {
+        setIsAdmin(true);
+        setLoading(false);
+        return;
+      }
+
+      // Then check database role
       const isAdminRole = await checkIsAdmin(user.id);
       setIsAdmin(isAdminRole);
-      
-      if (!isAdminRole) {
-        // First time setup - show message
-        toast({
-          title: "Configuração inicial",
-          description: "Execute o comando SQL para adicionar seu role de admin.",
-        });
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      // If email matches, grant access anyway
+      if (user.email === ADMIN_EMAIL) {
+        setIsAdmin(true);
       }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const loadStats = async () => {
@@ -70,6 +81,9 @@ const AdminPanel = ({ onClose }: AdminPanelProps) => {
     }
   };
 
+  // Show admin content if email matches OR if isAdmin is true
+  const hasAdminAccess = isAdmin || user?.email === ADMIN_EMAIL;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -78,7 +92,7 @@ const AdminPanel = ({ onClose }: AdminPanelProps) => {
     );
   }
 
-  if (!isAdmin && user?.email !== ADMIN_EMAIL) {
+  if (!hasAdminAccess) {
     return (
       <div className="p-4">
         <div className="flex items-center gap-2 mb-4">
