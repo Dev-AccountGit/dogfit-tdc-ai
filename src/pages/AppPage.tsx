@@ -13,23 +13,38 @@ const AppPage = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
+    // Timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setIsReady(true);
+    }, 2000);
+
+    if (!loading) {
+      setIsReady(true);
+      clearTimeout(timeout);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
+
+  useEffect(() => {
+    if (isReady && !user) {
       navigate("/auth");
       return;
     }
     
     // Check if onboarding is complete
-    if (!loading && user) {
+    if (isReady && user) {
       const isOnboardingComplete = localStorage.getItem('onboarding_complete');
       if (isOnboardingComplete !== 'true') {
         navigate("/onboarding");
       }
     }
-  }, [user, loading, navigate]);
+  }, [user, isReady, navigate]);
 
-  if (loading) {
+  if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
