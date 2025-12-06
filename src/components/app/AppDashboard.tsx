@@ -1,23 +1,99 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Flame, Droplets, Footprints, Plus, ChevronRight } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { Flame, Droplets, Footprints, Plus, ChevronRight, Trash2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { 
+  getTodayStats, 
+  getTodayMeals, 
+  getProfile, 
+  addWater,
+  deleteMeal,
+  type DailyStats,
+  type Meal,
+  type Profile
+} from "@/services/appService";
+import { useToast } from "@/hooks/use-toast";
 
-const meals = [
-  { id: 1, name: "Café da manhã", calories: 450, time: "08:30", emoji: "🍳" },
-  { id: 2, name: "Almoço", calories: 680, time: "12:45", emoji: "🍝" },
-  { id: 3, name: "Lanche", calories: 150, time: "16:00", emoji: "🍎" },
-];
+const mealTypeEmojis: Record<string, string> = {
+  breakfast: "🍳",
+  lunch: "🍝",
+  dinner: "🍽️",
+  snack: "🍎",
+};
+
+const mealTypeNames: Record<string, string> = {
+  breakfast: "Café da manhã",
+  lunch: "Almoço",
+  dinner: "Jantar",
+  snack: "Lanche",
+};
 
 const AppDashboard = () => {
-  const { t } = useTranslation();
-  const [dailyGoal] = useState(2000);
-  const [consumed] = useState(1280);
-  const [water] = useState(6);
-  const [steps] = useState(7234);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<DailyStats | null>(null);
+  const [meals, setMeals] = useState<Meal[]>([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
-  const remaining = dailyGoal - consumed;
-  const progress = (consumed / dailyGoal) * 100;
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user]);
+
+  const loadData = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const [statsData, mealsData, profileData] = await Promise.all([
+        getTodayStats(user.id),
+        getTodayMeals(user.id),
+        getProfile(user.id),
+      ]);
+      setStats(statsData);
+      setMeals(mealsData);
+      setProfile(profileData);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddWater = async () => {
+    if (!user) return;
+    try {
+      await addWater(user.id);
+      toast({ title: "Água adicionada!", description: "+1 copo de água" });
+      loadData();
+    } catch (error) {
+      toast({ title: "Erro", description: "Não foi possível adicionar água", variant: "destructive" });
+    }
+  };
+
+  const handleDeleteMeal = async (mealId: string) => {
+    try {
+      await deleteMeal(mealId);
+      toast({ title: "Refeição removida!" });
+      loadData();
+    } catch (error) {
+      toast({ title: "Erro", description: "Não foi possível remover", variant: "destructive" });
+    }
+  };
+
+  const dailyGoal = profile?.daily_calorie_goal || 2000;
+  const consumed = stats?.total_calories || 0;
+  const remaining = Math.max(0, dailyGoal - consumed);
+  const progress = Math.min(100, (consumed / dailyGoal) * 100);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 space-y-6">
@@ -97,10 +173,13 @@ const AppDashboard = () => {
           <div className="w-8 h-8 rounded-full bg-health-red/20 flex items-center justify-center mb-2">
             <div className="w-3 h-3 rounded-full bg-health-red" />
           </div>
-          <p className="text-lg font-bold">85g</p>
+          <p className="text-lg font-bold">{stats?.total_protein?.toFixed(0) || 0}g</p>
           <p className="text-xs text-muted-foreground">Proteína</p>
           <div className="h-1 bg-secondary rounded-full mt-2">
-            <div className="h-full w-[70%] bg-health-red rounded-full" />
+            <div 
+              className="h-full bg-health-red rounded-full transition-all" 
+              style={{ width: `${Math.min(100, ((stats?.total_protein || 0) / (profile?.daily_protein_goal || 120)) * 100)}%` }}
+            />
           </div>
         </motion.div>
 
@@ -113,10 +192,13 @@ const AppDashboard = () => {
           <div className="w-8 h-8 rounded-full bg-health-yellow/20 flex items-center justify-center mb-2">
             <div className="w-3 h-3 rounded-full bg-health-yellow" />
           </div>
-          <p className="text-lg font-bold">156g</p>
+          <p className="text-lg font-bold">{stats?.total_carbs?.toFixed(0) || 0}g</p>
           <p className="text-xs text-muted-foreground">Carbos</p>
           <div className="h-1 bg-secondary rounded-full mt-2">
-            <div className="h-full w-[60%] bg-health-yellow rounded-full" />
+            <div 
+              className="h-full bg-health-yellow rounded-full transition-all" 
+              style={{ width: `${Math.min(100, ((stats?.total_carbs || 0) / (profile?.daily_carbs_goal || 250)) * 100)}%` }}
+            />
           </div>
         </motion.div>
 
@@ -129,30 +211,34 @@ const AppDashboard = () => {
           <div className="w-8 h-8 rounded-full bg-health-green/20 flex items-center justify-center mb-2">
             <div className="w-3 h-3 rounded-full bg-health-green" />
           </div>
-          <p className="text-lg font-bold">42g</p>
+          <p className="text-lg font-bold">{stats?.total_fat?.toFixed(0) || 0}g</p>
           <p className="text-xs text-muted-foreground">Gordura</p>
           <div className="h-1 bg-secondary rounded-full mt-2">
-            <div className="h-full w-[55%] bg-health-green rounded-full" />
+            <div 
+              className="h-full bg-health-green rounded-full transition-all" 
+              style={{ width: `${Math.min(100, ((stats?.total_fat || 0) / (profile?.daily_fat_goal || 65)) * 100)}%` }}
+            />
           </div>
         </motion.div>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3">
-        <motion.div
+        <motion.button
+          onClick={handleAddWater}
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="bg-blue-50 dark:bg-blue-950/30 rounded-2xl p-4 flex items-center gap-3"
+          className="bg-blue-50 dark:bg-blue-950/30 rounded-2xl p-4 flex items-center gap-3 text-left"
         >
           <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
             <Droplets className="w-6 h-6 text-blue-500" />
           </div>
           <div>
-            <p className="text-xl font-bold">{water}/8</p>
+            <p className="text-xl font-bold">{stats?.water_glasses || 0}/{profile?.daily_water_goal || 8}</p>
             <p className="text-xs text-muted-foreground">Copos de água</p>
           </div>
-        </motion.div>
+        </motion.button>
 
         <motion.div
           initial={{ x: 20, opacity: 0 }}
@@ -164,7 +250,7 @@ const AppDashboard = () => {
             <Footprints className="w-6 h-6 text-orange-500" />
           </div>
           <div>
-            <p className="text-xl font-bold">{steps.toLocaleString()}</p>
+            <p className="text-xl font-bold">{(stats?.steps || 0).toLocaleString()}</p>
             <p className="text-xs text-muted-foreground">Passos hoje</p>
           </div>
         </motion.div>
@@ -174,43 +260,45 @@ const AppDashboard = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold">Refeições de hoje</h2>
-          <button className="text-sm text-primary font-medium flex items-center gap-1">
-            Ver todas <ChevronRight className="w-4 h-4" />
-          </button>
         </div>
 
         <div className="space-y-3">
-          {meals.map((meal, index) => (
-            <motion.div
-              key={meal.id}
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-              className="bg-card rounded-2xl p-4 border border-border flex items-center gap-4"
-            >
-              <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-2xl">
-                {meal.emoji}
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold">{meal.name}</p>
-                <p className="text-xs text-muted-foreground">{meal.time}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-bold">{meal.calories}</p>
-                <p className="text-xs text-muted-foreground">kcal</p>
-              </div>
-            </motion.div>
-          ))}
-
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="w-full py-4 border-2 border-dashed border-border rounded-2xl flex items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Adicionar refeição</span>
-          </motion.button>
+          {meals.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>Nenhuma refeição registrada hoje</p>
+              <p className="text-sm">Toque no + para adicionar</p>
+            </div>
+          ) : (
+            meals.map((meal, index) => (
+              <motion.div
+                key={meal.id}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 + index * 0.1 }}
+                className="bg-card rounded-2xl p-4 border border-border flex items-center gap-4"
+              >
+                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-2xl">
+                  {mealTypeEmojis[meal.meal_type] || "🍽️"}
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold">{meal.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {mealTypeNames[meal.meal_type] || meal.meal_type} • {new Date(meal.logged_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+                <div className="text-right mr-2">
+                  <p className="font-bold">{meal.calories}</p>
+                  <p className="text-xs text-muted-foreground">kcal</p>
+                </div>
+                <button
+                  onClick={() => handleDeleteMeal(meal.id)}
+                  className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </motion.div>
+            ))
+          )}
         </div>
       </div>
     </div>

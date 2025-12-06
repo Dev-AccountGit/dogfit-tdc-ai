@@ -2,17 +2,21 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Camera, Image, Zap, X, Check, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { addMeal, getTodayStats, updateDailyStats } from "@/services/appService";
 
 const AppCamera = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [mode, setMode] = useState<"camera" | "preview" | "result">("camera");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCapture = () => {
-    // Simulate capture
+    // Simulate capture with demo image
     setCapturedImage("https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop");
     setMode("preview");
   };
@@ -31,10 +35,11 @@ const AppCamera = () => {
 
   const handleAnalyze = () => {
     setAnalyzing(true);
-    // Simulate AI analysis
+    // Simulate AI analysis - in production, this would call an edge function
     setTimeout(() => {
       setResult({
-        name: "Prato de Comida",
+        name: "Prato Completo",
+        meal_type: "lunch",
         items: [
           { name: "Arroz", calories: 200, protein: 4, carbs: 45, fat: 0.5 },
           { name: "Feijão", calories: 120, protein: 8, carbs: 22, fat: 0.5 },
@@ -49,14 +54,51 @@ const AppCamera = () => {
     }, 2000);
   };
 
-  const handleAddToLog = () => {
-    toast({
-      title: "Refeição adicionada!",
-      description: `${result.total.calories} kcal registradas no seu diário.`,
-    });
-    setMode("camera");
-    setCapturedImage(null);
-    setResult(null);
+  const handleAddToLog = async () => {
+    if (!user || !result) return;
+    
+    setSaving(true);
+    try {
+      // Add meal to database
+      await addMeal({
+        user_id: user.id,
+        name: result.name,
+        meal_type: result.meal_type,
+        calories: result.total.calories,
+        protein: result.total.protein,
+        carbs: result.total.carbs,
+        fat: result.total.fat,
+        image_url: capturedImage || undefined,
+        logged_at: new Date().toISOString(),
+      });
+
+      // Update daily stats
+      const stats = await getTodayStats(user.id);
+      if (stats) {
+        await updateDailyStats(stats.id, {
+          total_calories: (stats.total_calories || 0) + result.total.calories,
+          total_protein: Number(stats.total_protein || 0) + result.total.protein,
+          total_carbs: Number(stats.total_carbs || 0) + result.total.carbs,
+          total_fat: Number(stats.total_fat || 0) + result.total.fat,
+        });
+      }
+
+      toast({
+        title: "Refeição adicionada!",
+        description: `${result.total.calories} kcal registradas no seu diário.`,
+      });
+      
+      handleReset();
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível salvar a refeição.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleReset = () => {
@@ -138,10 +180,11 @@ const AppCamera = () => {
           </button>
           <button
             onClick={handleAddToLog}
-            className="py-4 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2"
+            disabled={saving}
+            className="py-4 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <Check className="w-5 h-5" />
-            Adicionar
+            {saving ? "Salvando..." : "Adicionar"}
           </button>
         </div>
       </div>
